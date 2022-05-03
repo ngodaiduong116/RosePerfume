@@ -192,7 +192,7 @@
     <Compile Include="Models\EF\Order.cs" />
     <Compile Include="Models\EF\OrderDetail.cs" />
     <Compile Include="Models\EF\Product.cs" />
-    <Compile Include="Models\EF\ShopTiviDBModel.cs" />
+    <Compile Include="Models\EF\RosePerfumeDBModel.cs" />
     <Compile Include="Models\EF\sysdiagram.cs" />
     <Compile Include="Models\EF\Tag.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

@@ -11,7 +11,7 @@ namespace WebShopTivi.Controllers
 {
     public class CategoryController : Controller
     {
-        ShopTiviDBModel db = new ShopTiviDBModel();
+        RosePerfumeDBModel db = new RosePerfumeDBModel();
         // GET: Category
         public ActionResult Index(int id, string SortOrder, int page = 1, int pageSize = 16)
         {

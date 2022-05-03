@@ -8,7 +8,7 @@ namespace WebShopTivi.Models.DAO
 {
     public class OrderDetailDAO
     {
-        ShopTiviDBModel db = new ShopTiviDBModel();
+        RosePerfumeDBModel db = new RosePerfumeDBModel();
         public bool Insert(OrderDetail detail)
         {
             try

@@ -11,7 +11,7 @@ namespace WebShopTivi.Areas.Admin.Controllers
 {
     public class CustomerController : BaseController
     {
-        ShopTiviDBModel db = new ShopTiviDBModel();
+        RosePerfumeDBModel db = new RosePerfumeDBModel();
         // GET: Admin/Customer
         public ActionResult Index(string searchString, int page = 1, int pagesize = 5)
         {

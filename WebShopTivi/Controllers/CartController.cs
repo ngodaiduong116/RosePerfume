@@ -12,7 +12,7 @@ namespace WebShopTivi.Controllers
 {
     public class CartController : BaseController
     {
-        ShopTiviDBModel db = new ShopTiviDBModel();
+        RosePerfumeDBModel db = new RosePerfumeDBModel();
         private string CartSession = "CartSession";
         // GET: Cart
         public ActionResult Index()

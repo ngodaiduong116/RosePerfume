@@ -10,7 +10,7 @@ namespace WebShopTivi.Models.DAO
 {
     public class ProductDAO
     {
-        private ShopTiviDBModel db = new ShopTiviDBModel();
+        private RosePerfumeDBModel db = new RosePerfumeDBModel();
 
         public List<Product> ListAll()
         {

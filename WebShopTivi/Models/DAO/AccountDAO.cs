@@ -9,7 +9,7 @@ namespace WebShopTivi.Models.DAO
 {
     public class AccountDAO
     {
-        ShopTiviDBModel db = new ShopTiviDBModel();
+        RosePerfumeDBModel db = new RosePerfumeDBModel();
         public IEnumerable<Account> ListAllPaging(string searchString, int page, int pagesize)
         {
             IQueryable<Account> model = db.Accounts;

@@ -9,7 +9,7 @@ namespace WebShopTivi.Areas.Admin.Controllers
 {
     public class StatisticalController : BaseController
     {
-        ShopTiviDBModel db = new ShopTiviDBModel();
+        RosePerfumeDBModel db = new RosePerfumeDBModel();
         // GET: Admin/Statistical
         public ActionResult Index(FormCollection fields)
         {

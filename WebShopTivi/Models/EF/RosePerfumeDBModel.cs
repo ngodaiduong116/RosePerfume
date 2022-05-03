@@ -5,9 +5,9 @@ using System.Linq;
 
 namespace WebShopTivi.Models.EF
 {
-    public partial class ShopTiviDBModel : DbContext
+    public partial class RosePerfumeDBModel : DbContext
     {
-        public ShopTiviDBModel()
+        public RosePerfumeDBModel()
             : base("name=PerfumeShop")
         {
         }

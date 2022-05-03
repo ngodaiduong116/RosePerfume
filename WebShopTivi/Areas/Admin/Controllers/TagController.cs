@@ -10,7 +10,7 @@ namespace WebShopTivi.Areas.Admin.Controllers
 {
     public class TagController : BaseController
     {
-        ShopTiviDBModel db = new ShopTiviDBModel();
+        RosePerfumeDBModel db = new RosePerfumeDBModel();
         // GET: Admin/Tag
         public ActionResult Index(string searchString, int page = 1, int pagesize = 5)
         {

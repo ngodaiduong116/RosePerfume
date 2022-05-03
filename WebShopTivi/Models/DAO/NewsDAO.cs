@@ -9,7 +9,7 @@ namespace WebShopTivi.Models.DAO
 {
     public class NewsDAO
     {
-        ShopTiviDBModel db = new ShopTiviDBModel();
+        RosePerfumeDBModel db = new RosePerfumeDBModel();
         public List<News> ListAll()
         {
             return db.News.ToList();

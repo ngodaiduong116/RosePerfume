@@ -22,7 +22,7 @@ namespace WebShopTivi.Areas.Admin.Controllers
         [HttpPost]
         public ActionResult Index(FormCollection field)
         {
-            ShopTiviDBModel db = new ShopTiviDBModel();
+            RosePerfumeDBModel db = new RosePerfumeDBModel();
             string strerr = "";
             string username = field["username"];
             string password = field["password"];

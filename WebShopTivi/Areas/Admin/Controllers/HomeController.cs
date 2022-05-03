@@ -9,7 +9,7 @@ namespace WebShopTivi.Areas.Admin.Controllers
 {
     public class HomeController : BaseController
     {
-        private ShopTiviDBModel db = new ShopTiviDBModel();
+        private RosePerfumeDBModel db = new RosePerfumeDBModel();
 
         // GET: Admin/Home
         public ActionResult Index()

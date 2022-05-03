@@ -9,7 +9,7 @@ namespace WebShopTivi.Controllers
 {
     public class LoginController : Controller
     {
-        ShopTiviDBModel db = new ShopTiviDBModel();
+        RosePerfumeDBModel db = new RosePerfumeDBModel();
         // GET: Login
         public ActionResult Index()
         {
@@ -23,7 +23,7 @@ namespace WebShopTivi.Controllers
         [HttpPost]
         public ActionResult Index(FormCollection field)
         {
-            ShopTiviDBModel db = new ShopTiviDBModel();
+            RosePerfumeDBModel db = new RosePerfumeDBModel();
             string strerr = "";
             string username = field["username"];
             string password = field["password"];

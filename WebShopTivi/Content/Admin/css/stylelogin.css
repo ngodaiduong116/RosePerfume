@@ -4,24 +4,26 @@
     box-sizing: border-box;
 }
 
-#cus-sec{
+#cus-sec {
     display: flex;
     justify-content: center;
     align-items: center;
     min-height: 100vh;
-    background: linear-gradient(-30deg, #03a9f4 0%, #3a78b7 50%, #262626 50%, #607d8b 100%);
-    filter: hue-rotate(120deg);
-    animation: animate 3s linear infinite;
+    /*    background: linear-gradient(-30deg, #03a9f4 0%, #3a78b7 50%, #262626 50%, #607d8b 100%);*/
+    background-image: url('../img/pexels-s-migaj-747964.jpg');
+    background-size: cover;
+    /*    filter: hue-rotate(120deg);*/
+    /*  animation: animate 3s linear infinite;*/
 }
 
-@keyframes animate {
+/*@keyframes animate {
     0%{
         filter: hue-rotate(0deg);
     }
     100%{
         filter: hue-rotate(360deg);
     }
-}
+}*/
 
 .cus-box{
     position: relative;
@@ -54,9 +56,9 @@
     width: 100%;
 }
 
-.cus-box .cus-form h2{
-    color: #fff;
-    font-weight: 600;
+.cus-box .cus-form h2 {
+    color: black;
+    font-weight: 700;
     letter-spacing: 2px;
     margin-bottom: 30px;
 }
@@ -81,8 +83,8 @@
 }
 
 .cus-box .cus-form .cus-inputBx input[type="submit"]{
-    background: #fff;
-    color: #111;
+    background-color:black;
+    color: white;
     max-width: 108px;
     padding: 8px 10px;
     box-shadow: none;
