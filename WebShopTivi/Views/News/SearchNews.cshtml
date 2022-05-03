@@ -1,0 +1,55 @@
+﻿@model PagedList.IPagedList<WebShopTivi.Models.EF.News>
+@using PagedList.Mvc;
+@{
+    ViewBag.Title = "SearchNews";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<a href="/News" style="margin-left:120px">Quay lại</a>
+
+<div class="blog_page_section blog_sidebar blog_reverse mt-30">
+    <div class="container">
+        <div class="row">
+
+            <div class="col-lg-12 col-md-12">
+                <div class="blog_wrapper">
+                    @foreach (var item in Model)
+                    {
+                        <div class="single_blog">
+                            <div class="blog_thumb">
+                                <a href="/News/Detail/@item.Id"><img src="@item.Image" alt=""></a>
+                            </div>
+                            <div class="blog_content">
+                                <h3><a href="/News/Detail/@item.Id">@item.Name</a></h3>
+                                <div class="blog_meta">
+                                    <span class="post_date"><i class="fa-calendar fa"></i> @item.CreateDate</span>
+                                    <span class="author"><i class="fa fa-user-circle"></i> Posts by : admin</span>
+                                    <span class="category">
+                                        <i class="fa fa-folder-open"></i>
+                                        <a href="#">Fashion</a>
+                                    </span>
+                                </div>
+                                <div class="blog_desc">
+                                    <p>
+                                        @item.Description
+                                    </p>
+                                </div>
+                                <div class="readmore_button">
+                                    <a href="/News/Detail/@item.Id">read more</a>
+                                </div>
+                            </div>
+                        </div>
+                    }
+
+                    
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+<!--blog area end-->
+<div style="margin-left:400px;">
+    @Html.PagedListPager(Model, page => Url.Action("Index", new { page, searchString = ViewBag.SearchString }))
+</div>
+

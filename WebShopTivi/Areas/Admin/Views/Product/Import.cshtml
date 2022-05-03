@@ -1,0 +1,29 @@
+﻿
+@{
+    ViewBag.Title = "Import";
+    Layout = "~/Areas/Admin/Views/Shared/_AdminLayout.cshtml";
+}
+
+<h2>Import</h2>
+<div class="row">
+    <a href="https://localhost:44329/Content/templatefile/ImportProduct.xlsx" class="btn btn-success" style="margin-bottom:20px;float:left;">Tải file mẫu tại đây</a>
+</div>
+
+
+@using (Html.BeginForm("Import", "Product", FormMethod.Post, new { enctype = "multipart/form-data" }))
+{
+
+
+    <input type="file" name="file" value="" />
+
+    <div class="form-group">
+        <div class="col-md-offset-2 col-md-10">
+            <input type="submit" value="Create" class="btn btn-default" />
+        </div>
+    </div>
+}
+
+<div>
+    @Html.ActionLink("Back to List", "Index")
+</div>
+

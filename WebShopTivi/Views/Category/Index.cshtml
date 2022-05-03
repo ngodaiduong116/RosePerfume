@@ -1,0 +1,191 @@
+﻿@model PagedList.IPagedList<WebShopTivi.Models.EF.Product>
+@using PagedList.Mvc;
+@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    int categoryid = ViewBag.CategoryId;
+    var categoryname = ViewBag.CategoryName;
+}
+
+<!--breadcrumbs area start-->
+<div class="breadcrumbs_area">
+    <div class="container">
+        <div class="row">
+            <div class="col-12">
+                <div class="breadcrumb_content">
+                    <ul>
+                        <li><a href="/trang-chu">Trang chủ</a></li>
+
+                        <li>@categoryname</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!--breadcrumbs area end-->
+<!--shop  area start-->
+<div class="shop_area shop_fullwidth">
+    <div class="container">
+        <div class="row">
+            <div class="col-12">
+                <!--shop wrapper start-->
+                <!--shop toolbar start-->
+
+                <div class="shop_toolbar_wrapper">
+                    <div class="shop_toolbar_btn">
+
+                        <button data-role="grid_3" type="button" class=" btn-grid-3" data-toggle="tooltip"
+                                title="3"><i class="fas fa-th-large"></i></button>
+
+                        <button data-role="grid_4" type="button" class="active btn-grid-4" data-toggle="tooltip"
+                                title="4"><i class="fas fa-th"></i></button>
+
+                        <button data-role="grid_list" type="button" class="btn-list" data-toggle="tooltip"
+                                title="List"><i class="fas fa-bars"></i></button>
+                    </div>
+                    <a href="/Category/Index/@categoryid?SortOrder=@ViewBag.LowToHigh">Giá: Từ thấp đến cao</a>
+                    <a href="/Category/Index/@categoryid?SortOrder=@ViewBag.HighToLow">Giá: Từ cao đến thấp</a>
+                    <div class=" niceselect_option">
+
+
+                        <select name="orderby" id="short">
+
+                            <option selected value="1">Sắp xếp</option>
+                            <option value="2"><a href="/Category/Index/@categoryid?SortOrder=@ViewBag.Newest">Sản phẩm mới nhất</a></option>
+                            <option value="3">Sort by newness</option>
+                            <option value="4"><a href="/Category/Index/@categoryid?SortOrder=@ViewBag.LowToHigh">Giá: Từ thấp đến cao</a></option>
+                            <option value="5"><a href="/Category/Index/@categoryid?SortOrder=@ViewBag.HighToLow">Giá: Từ cao đến thấp</a></option>
+
+                        </select>
+
+
+
+                    </div>
+                    @*<div class="page_amount">
+                        <p>Showing 1–9 of 21 results</p>
+                    </div>*@
+                </div>
+                <!--shop toolbar end-->
+
+                <div class="row shop_wrapper grid_4">
+                    @foreach (var item in Model)
+                    {
+                        <div class="col-lg-3 col-md-4 col-sm-6 col-12 ">
+                            <div class="single_product">
+                                <div class="product_thumb">
+                                    <a class="primary_img" href="/Product/Detail/@item.Id">
+                                        <img src="@item.Image" alt="" style="max-width:250px;">
+                                    </a>
+                                    <a class="secondary_img" href="product-details.html">
+                                        <img src="assets/img/product/product14.jpg" alt="">
+                                    </a>
+                                    @if (item.PercentPromotion != 0)
+                                    {
+                                        <div class="label_product">
+                                            <span class="label_sale">-@item.PercentPromotion%</span>
+                                        </div>
+                                    }
+
+                                    <div class="action_links">
+                                        <ul>
+
+                                            <li class="quick_button">
+                                                <a href="/Product/Detail/@item.Id" data-toggle="modal"
+                                                   data-target="#modal_box" title="quick view">
+                                                    <i class="far fa-eye"></i>
+                                                </a>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                    <div class="add_to_cart">
+                                        <a href="/Cart/AddItem?id=@item.Id&quantity=1" title="add to cart">Add to cart</a>
+                                    </div>
+                                </div>
+                                <div class="product_content grid_content">
+                                    <p class="manufacture_product"><a href="">@item.Category.Name</a></p>
+                                    <h4><a href="/Product/Detail/@item.Id">@item.Name</a></h4>
+                                    @if (item.PromotionPrice != null)
+                                    {
+                                        <div class="price_box">
+                                            <span class="old_price">@((item.Price.GetValueOrDefault(0)).ToString("N0"))đ</span>
+                                            <span class="current_price ml-5">@((item.PromotionPrice.GetValueOrDefault(0)).ToString("N0"))đ</span>
+                                        </div>
+                                    }
+                                    else
+                                    {
+                                        <div class="price_box" style="float:right;">
+                                            <span class="current_price">@((item.Price.GetValueOrDefault(0)).ToString("N0"))đ</span>
+                                        </div>
+                                    }
+                                </div>
+                                <div class="product_content list_content">
+                                    <div class="left_caption">
+                                        <p class="manufacture_product"><a href="">@item.Category.Name</a></p>
+                                        <h4><a href="/Product/Detail/@item.Id">@item.Name</a></h4>
+                                        <div class="product_desc">
+                                            <p>
+                                                @item.Description
+                                            </p>
+                                        </div>
+                                    </div>
+                                    <div class="right_caption">
+                                        <div class="text_available">
+                                            <p>Còn: <span>@item.Quantity sản phẩm</span></p>
+                                        </div>
+                                        @if (item.PromotionPrice != null)
+                                        {
+                                            <div class="price_box">
+                                                <span class="old_price">@((item.Price.GetValueOrDefault(0)).ToString("N0"))đ</span>
+                                                <span class="current_price">@((item.PromotionPrice.GetValueOrDefault(0)).ToString("N0"))đ</span>
+                                            </div>
+                                        }
+                                        else
+                                        {
+                                            <div class="price_box">
+                                                <span class="current_price">@((item.Price.GetValueOrDefault(0)).ToString("N0"))đ</span>
+                                            </div>
+                                        }
+                                        <div class="cart_links_btn">
+                                            <a href="/Cart/AddItem?id=@item.Id&quantity=1" title="add to cart">Mua ngay</a>
+                                        </div>
+                                        <div class="action_list_links">
+                                            <ul>
+
+                                                <li class="quick_button">
+                                                    <a href="/Product/Detail/@item.Id" data-toggle="modal"
+                                                       data-target="#modal_box" title="quick view">
+                                                        <i class="far fa-eye"></i>
+                                                    </a>
+                                                </li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    }
+
+
+                </div>
+
+
+                @Html.PagedListPager(Model, page => Url.Action("Index", new { page, SortOrder = ViewBag.CurrentSort }))
+                @*<div class="shop_toolbar t_bottom">
+            <div class="pagination">
+                <ul>
+                    <li class="current">1</li>
+                    <li><a href="#">2</a></li>
+                    <li><a href="#">3</a></li>
+                    <li class="next"><a href="#">next</a></li>
+                    <li><a href="#">>></a></li>
+                </ul>
+            </div>
+        </div>*@
+                <!--shop toolbar end-->
+                <!--shop wrapper end-->
+            </div>
+        </div>
+    </div>
+</div>
+<!--shop  area end-->

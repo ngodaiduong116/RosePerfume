@@ -1,0 +1,159 @@
+﻿@model List<WebShopTivi.Models.CartItem>
+@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+
+@section jsFooter{
+    <script src="~/Content/EventJs/cartController.js"></script>
+}
+<!--breadcrumbs area start-->
+<div class="breadcrumbs_area">
+    <div class="container">
+        <div class="row">
+            <div class="col-12">
+                <div class="breadcrumb_content">
+                    <ul>
+                        <li><a href="/trang-chu">Trang chủ</a></li>
+                        <li>Giỏ hàng</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!--breadcrumbs area end-->
+<!--shopping cart area start -->
+<div class="shopping_cart_area mt-32">
+    <div class="container">
+
+        <div class="row">
+            <div class="col-12">
+                <div class="table_desc">
+                    <div class="cart_page table-responsive">
+                        @if (Model.Count > 0)
+                        {
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th class="product_remove">Xóa</th>
+                                        <th class="product_thumb">Hình ảnh</th>
+                                        <th class="product_name">Tên sản phẩm</th>
+                                        <th class="product-price">Giá</th>
+                                        <th class="product_quantity">Số lượng</th>
+                                        <th class="product_total">Số tiền</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var item in Model)
+                                    {
+                                    <tr>
+                                        <td class="product_remove">
+                                            <a href="#" data-id="@item.Product.Id" class="btn-delete"><i class="far fa-trash-alt"></i></a>
+                                        </td>
+                                        <td class="product_thumb">
+                                            <a href="#">
+                                                <img src="@item.Product.Image" width="200px" height="150px" alt="">
+                                            </a>
+                                        </td>
+                                        <td class="product_name"><a href="#">@item.Product.Name</a></td>
+                                        @if (item.Product.PromotionPrice != null)
+                                        {
+                                            <td class="product-price">@item.Product.PromotionPrice.GetValueOrDefault(0).ToString("N0")</td>
+                                        }
+                                        else
+                                        {
+                                            <td class="product-price">@item.Product.Price.GetValueOrDefault(0).ToString("N0")</td>
+                                        }
+
+                                        <td class="product_quantity">
+                                            <label>Số lượng</label> <input min="1" max="100" class="txtquantity" onchange="updateQuantity()" data-id="@item.Product.Id" value="@item.quantity" type="number">
+                                        </td>
+                                        @*<td class="product_total">@((item.Product.PromotionPrice.GetValueOrDefault(0)*item.quantity).ToString("N0"))</td>*@
+                                        <td class="product_total">@((item.Total.GetValueOrDefault(0)).ToString("N0"))</td>
+
+                                    </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        }
+                        else
+                        {
+                            <span class="alert alert-danger">Chưa có sản phẩm nào trong giỏ hàng</span>
+                        }
+
+                    </div>
+                    <div class="row" style="float:right;">
+
+                        <div class="cart_submit">
+                            <button id="btnPayment" type="submit">Mua ngay</button>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!--coupon code area start-->
+        @*<div class="coupon_area right">
+                <div class="row">
+
+                    <div class="col-lg-6 col-md-6 ">
+                        <div class="coupon_code right">
+                            <h3>Cart Totals</h3>
+                            <div class="coupon_inner">
+                                <div class="cart_subtotal">
+                                    <p>Subtotal</p>
+                                    <p class="cart_amount">£215.00</p>
+                                </div>
+                                <div class="cart_subtotal ">
+                                    <p>Shipping</p>
+                                    <p class="cart_amount"><span>Flat Rate:</span> £255.00</p>
+                                </div>
+                                <a href="#">Calculate shipping</a>
+
+                                <div class="cart_subtotal">
+                                    <p>Total</p>
+                                    <p class="cart_amount">@((totalmoney.GetValueOrDefault(0)).ToString("N0"))</p>
+                                </div>
+                                <div class="checkout_btn">
+                                    <a href="#">Proceed to Checkout</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>*@
+        <!--coupon code area end-->
+
+    </div>
+</div>
+<!--shopping cart area end -->
+
+<script>
+    function updateQuantity() {
+        var listsp = $('.txtquantity');
+        var cartList = [];
+        $.each(listsp, function (i, item) {
+            cartList.push({
+                quantity: $(item).val(),
+                Product: {
+                    Id: $(item).data('id')
+                }
+            });
+        });
+
+        $.ajax({
+            url: '/Cart/Update',
+            data: { cartModel: JSON.stringify(cartList) },
+            dataType: 'json',
+            type: 'POST',
+            success: function (res) {
+                if (res.status == true) {
+                    window.location.href = "/Cart";
+                }
+
+            }
+        })
+    };
+</script>

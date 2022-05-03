@@ -1,0 +1,84 @@
+﻿<!--header top start-->
+<div class="header_top">
+    <div class="container">
+        <div class="row align-items-center">
+            <div class="col-lg-3 col-md-9">
+                <div class="welcome_text  wow jello">
+                    <p>Chào mừng đến với cửa hàng!</p>
+                </div>
+            </div>
+            <div class="col-lg-6 col-md-9">
+                <marquee width="100%">
+                    @*Cửa hàng điện tử HOÀNG SƠN - Tầm nhìn của bạn, tương lai của bạn*@
+                    <strong>25% OFF<sup>1</sup> Your Entire First Sephora Credit Card Purchase. Learn More</strong>
+                </marquee>
+            </div>
+            <div class="col-lg-3 col-md-9">
+                <div class="top_right text-right">
+                    <ul>
+                        @if ((string)Session["UserClient"] == "")
+                        {
+                            <li><a href="/Login">Đăng nhập</li>
+                            <li><a href="/Login/Register">Đăng ký</a></li>
+                        }
+                        else
+                        {
+                            <li class="top_links">
+                                <a href="#">
+                                    Xin chào, @Session["UserClient"]
+                                </a>
+                                <ul class="dropdown_links">
+                                    @*<li><a href="my-account.html">Đăng nhập </a></li>*@
+                                    <li><a href="/Login/Logout">Đăng xuất</a></li>
+                                </ul>
+                            </li>
+                        }
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!--header top start-->
+<!--header middel start-->
+<div class="header_middle">
+    <div class="container">
+        <div class="row align-items-center">
+            <div class="col-lg-3 col-md-6">
+                <div class="logo">
+                    <a href="/trang-chu"><img src="~/Content/img/1-removebg-preview.png" alt="" style="width:150px;height:50px;"></a>
+                </div>
+            </div>
+            <div class="col-lg-9 col-md-6">
+                <div class="middel_right">
+                    <div class="search-container">
+                        <form action="/Product/SearchProduct" method="get">
+                            <div class="search_box">
+                                <input id="txtKeyword" placeholder="Tìm kiếm ..." type="text" name="keyword">
+                                <button type="submit"><i class="fas fa-search"></i></button>
+                            </div>
+                        </form>
+                    </div>
+                    <div class="customer_support wow bounce" data-wow-iteration="3">
+                        <div class="support_img_icon">
+                            <img src="~/Content//Client/img/icon_phone.png" alt="">
+                        </div>
+                        <div class="customer_support_text">
+                            <p>
+                                <span>Customer Support</span>
+                                <a href="tel:0398581132">0398581132</a>
+                            </p>
+                        </div>
+                    </div>
+                    @if (TempData["AlertMessage"] != null)
+                    {
+                        <div id="alertBox" style="position: fixed; right: 0px; max-width:300px" class="container float-right text-center col-md-3 alert @TempData["AlertType"] hide">
+                            @TempData["AlertMessage"]
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!--header middel end-->

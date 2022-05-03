@@ -1,0 +1,85 @@
+﻿@{
+    ViewBag.Title = "Index";
+    Layout = "~/Areas/Admin/Views/Shared/_AdminLayout.cshtml";
+    var revenue = ViewBag.Revenue;
+    var profit = ViewBag.Profit;
+}
+<script src="https://code.highcharts.com/highcharts.js"></script>
+
+<h2>Thống kê</h2>
+
+<!-- Content Row -->
+@using (Html.BeginForm("ThongKe", "Statistical", FormMethod.Post))
+{
+
+    <div class="row">
+        <div class="ml-3">
+            Ngày bắt đầu
+            <input type="date" name="ngaybatdau" value="" style="margin:20px" />
+        </div>
+        <div>
+            Ngày kết thúc
+            <input type="date" name="ngayketthuc" value="" style="margin:20px" />
+        </div>
+
+        <input type="submit" name="timkiem" value="Tìm kiếm" style="margin:20px" />
+    </div>
+
+}
+
+<div class="row">
+
+    <!-- Earnings (Monthly) Card Example -->
+    <div class="col-xl-3 col-md-6 mb-4">
+        <div class="card border-left-primary shadow h-100 py-2">
+            <div class="card-body">
+                <div class="row no-gutters align-items-center">
+                    <div class="col mr-2">
+                        <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
+                            Doanh thu
+                        </div>
+                        <div class="h5 mb-0 font-weight-bold text-gray-800">@(revenue!=null ? (revenue).ToString("N0") : "0")</div>
+                    </div>
+                    <div class="col-auto">
+                        <i class="fas fa-dollar-sign fa-2x text-gray-300"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Earnings (Monthly) Card Example -->
+    <div class="col-xl-3 col-md-6 mb-4">
+        <div class="card border-left-success shadow h-100 py-2">
+            <div class="card-body">
+                <div class="row no-gutters align-items-center">
+                    <div class="col mr-2">
+                        <div class="text-xs font-weight-bold text-success text-uppercase mb-1">
+                            Lợi nhuận
+                        </div>
+                        <div class="h5 mb-0 font-weight-bold text-gray-800">@(profit!=null ? (profit).ToString("N0"): "0")</div>
+                    </div>
+                    <div class="col-auto">
+                        <i class="fas fa-dollar-sign fa-2x text-gray-300"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Content Row -->
+<!-- Chart -->
+@*<select>
+        <option value="2019" selected>2019</option>
+        <option value="2020">2020</option>
+        <option value="2021">2021</option>
+        <option value="2022">2022</option>
+        <option value="2023">2023</option>
+        <option value="2024">2024</option>
+        <option value="2025">2025</option>
+        <option value="2026">2026</option>
+    </select>
+    <figure class="highcharts-figure">
+        <div id="container"></div>
+    </figure>*@

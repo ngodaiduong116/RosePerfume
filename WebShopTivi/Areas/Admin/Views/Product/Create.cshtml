@@ -1,0 +1,191 @@
+﻿@model WebShopTivi.Models.EF.Product
+
+@{
+    ViewBag.Title = "Create";
+    Layout = "~/Areas/Admin/Views/Shared/_AdminLayout.cshtml";
+}
+
+@section Scripts{
+    <script src="~/Content/ckeditor/ckeditor.js"></script>
+
+    <script type="text/javascript">
+        $(function () {
+            CKEDITOR.replace("mota", { customConfig: "/Assets/ckeditor/config.js" });
+        });
+    </script>
+
+}
+
+<h2>Tạo mới</h2>
+
+@using (Html.BeginForm("Create", "Product", FormMethod.Post, new { enctype = "multipart/form-data" }))
+{
+
+    <div class="">
+        <hr />
+        @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+        <div class="row">
+            <div class="form-group col-md-6">
+                <h6>Danh mục</h6>
+                <div class="col-md-10">
+                    @Html.DropDownListFor(model => model.CategoryId, null, new { htmlAttributes = new { @class = "form-control" } })
+                    @Html.ValidationMessageFor(model => model.CategoryId, "", new { @class = "text-danger" })
+                </div>
+            </div>
+
+            <div class="form-group col-md-6">
+                <h6>Tên sản phẩm</h6>
+                <div class="col-md-10">
+                    @Html.EditorFor(model => model.Name, new { htmlAttributes = new { @class = "form-control", required = "required" } })
+                    @Html.ValidationMessageFor(model => model.Name, "", new { @class = "text-danger" })
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="form-group col-lg-6">
+                <h6>Thể tích</h6>
+                <div class="col-md-10">
+                    @Html.EditorFor(model => model.Volume, new { htmlAttributes = new { @class = "form-control", required = "required" } })
+                    @Html.ValidationMessageFor(model => model.Volume, "", new { @class = "text-danger" })
+                </div>
+            </div>
+
+            <div class="form-group col-lg-6">
+                <h6>Năm sản xuất</h6>
+                <div class="col-md-10">
+                    @Html.EditorFor(model => model.ReleaseYear, new { htmlAttributes = new { @class = "form-control" } })
+                    @Html.ValidationMessageFor(model => model.ReleaseYear, "", new { @class = "text-danger" })
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="form-group col-lg-6">
+                <h6>Giới tính</h6>
+                <div class="col-md-10">
+                    <div class="checkbox">
+                        @Html.EditorFor(model => model.Sex, new { htmlAttributes = new { @class = "form-control", required = "required" } })
+                        @Html.ValidationMessageFor(model => model.Sex, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-group col-lg-6">
+                <h6>Xuất xứ</h6>
+                <div class="col-md-10">
+                    @Html.EditorFor(model => model.Origin, new { htmlAttributes = new { @class = "form-control" } })
+                    @Html.ValidationMessageFor(model => model.Origin, "", new { @class = "text-danger" })
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="form-group col-lg-6">
+                <h6>Hình ảnh</h6>
+                <div class="col-md-10">
+                    <input type="file" name="imgfile" id="imgfile" value="" />
+                    @Html.ValidationMessageFor(model => model.Image, "", new { @class = "text-danger" })
+                </div>
+            </div>
+            <div class="form-group col-lg-6">
+                <h6>Giá nhập</h6>
+                <div class="col-md-10">
+                    @Html.EditorFor(model => model.ImportPrice, new { htmlAttributes = new { @class = "form-control", required = "required" } })
+                    @Html.ValidationMessageFor(model => model.ImportPrice, "", new { @class = "text-danger" })
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="form-group col-lg-6">
+                <h6>Giá bán</h6>
+                <div class="col-md-10">
+                    @Html.EditorFor(model => model.Price, new { htmlAttributes = new { @class = "form-control", required = "required" } })
+                    @Html.ValidationMessageFor(model => model.Price, "", new { @class = "text-danger" })
+                </div>
+            </div>
+
+            <div class="form-group col-lg-6">
+                <h6>Giá khuyến mãi</h6>
+                <div class="col-md-10">
+                    @Html.EditorFor(model => model.PromotionPrice, new { htmlAttributes = new { @class = "form-control" } })
+                    @Html.ValidationMessageFor(model => model.PromotionPrice, "", new { @class = "text-danger" })
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="form-group col-lg-12">
+                <h6>Mô tả</h6>
+                <div class="col-md-12">
+                    @Html.EditorFor(model => model.Description, new { htmlAttributes = new { @class = "form-control", required = "required" } })
+                    @Html.ValidationMessageFor(model => model.Description, "", new { @class = "text-danger" })
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="form-group col-lg-12">
+                <h6>Phong cách</h6>
+                <div class="col-md-12">
+                    @Html.TextAreaFor(model => model.Style, new { htmlAttributes = new { @class = "form-control" }, id = "mota" })
+                    @Html.ValidationMessageFor(model => model.Style, "", new { @class = "text-danger" })
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="form-group col-lg-12">
+                <h6>Mô tả chi tiết</h6>
+                <div class="col-md-12">
+                    @Html.TextAreaFor(model => model.DescriptionDetail, new { htmlAttributes = new { @class = "form-control" }, id = "mota" })
+                    @Html.ValidationMessageFor(model => model.DescriptionDetail, "", new { @class = "text-danger" })
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="form-group col-lg-6">
+                <h6>Số lượng</h6>
+                <div class="col-md-10">
+                    @Html.EditorFor(model => model.Quantity, new { htmlAttributes = new { @class = "form-control" } })
+                    @Html.ValidationMessageFor(model => model.Quantity, "", new { @class = "text-danger" })
+                </div>
+            </div>
+            <div class="form-group col-lg-3">
+                @Html.LabelFor(model => model.TopHot, htmlAttributes: new { @class = "control-label col-md-2" })
+                <div class="col-md-10">
+                    <div class="checkbox">
+                        @Html.EditorFor(model => model.TopHot)
+                        @Html.ValidationMessageFor(model => model.TopHot, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-group col-lg-3">
+                @Html.LabelFor(model => model.Featured, htmlAttributes: new { @class = "control-label col-md-2" })
+                <div class="col-md-10">
+                    <div class="checkbox">
+                        @Html.EditorFor(model => model.Featured)
+                        @Html.ValidationMessageFor(model => model.Featured, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="form-group ">
+            @Html.LabelFor(model => model.Status, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                <div class="checkbox">
+                    @Html.EditorFor(model => model.Status)
+                    @Html.ValidationMessageFor(model => model.Status, "", new { @class = "text-danger" })
+                </div>
+            </div>
+        </div>
+
+        <div class="form-group ">
+            <div class="col-md-offset-2 col-md-10">
+                <input type="submit" value="Create" class="btn btn-primary" />
+            </div>
+        </div>
+    </div>
+}
+
+<div>
+    @Html.ActionLink("Back to List", "Index")
+</div>

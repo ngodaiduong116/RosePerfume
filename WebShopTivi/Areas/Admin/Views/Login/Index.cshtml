@@ -1,0 +1,36 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quản trị</title>
+    <link rel="stylesheet" href="~/Content/Admin/css/stylelogin.css">
+    <link href="~/Content/Client/css/bootstrap.min.css" rel="stylesheet" />
+</head>
+<body>
+    <section id="cus-sec">
+        <div class="cus-box">
+            <div class="cus-form">
+                <h2>Đăng nhập</h2>
+                @using (Html.BeginForm("Index", "Login", FormMethod.Post))
+                {
+                    <div class="cus-inputBx">
+                        <input type="text" name="username" placeholder="Tài khoản..." required autofocus>
+                    </div>
+                    <div class="cus-inputBx">
+                        <input type="password" name="password" placeholder="Mật khẩu..." required>
+                    </div>
+                    <div class="form-group">
+                        @Html.Raw(ViewBag.Error)
+                    </div>
+                    <div class="cus-inputBx">
+                        <input type="submit" value="Đăng nhập">
+                    </div>
+                }                
+
+            </div>
+        </div>
+    </section>
+</body>
+</html>

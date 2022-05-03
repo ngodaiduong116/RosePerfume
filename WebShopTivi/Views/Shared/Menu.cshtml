@@ -1,0 +1,42 @@
+﻿@model IEnumerable<WebShopTivi.Models.EF.Category>
+
+<!--header bottom satrt-->
+<div class="header_bottom sticky-header mb-2">
+    <div class="container">
+        <div class="row align-items-center">
+            <div class="col-12">
+                <div class="header_bottom_container header_position">
+                    <div class="main_menu">
+                        <nav>
+                            <ul>
+                                <li>
+                                    <a href="/trang-chu">Trang chủ</a>
+
+                                </li>
+
+                                <li>
+                                    <a href="#">Danh mục<i class="fa fa-angle-down"></i></a>
+                                    <ul class="sub_menu pages">
+                                        @foreach (var item in Model)
+                                        {
+                                            <li><a href="/Category/Index/@item.Id">@item.Name</a></li>
+                                        }
+
+
+                                    </ul>
+                                </li>
+                                
+                                <li><a href="/News">Tin tức</a></li>
+                                <li><a href="/AboutUs">Về chúng tôi</a></li>
+                                <li><a href="/Contact">Liên hệ</a></li>
+                            </ul>
+                        </nav>
+                    </div>
+
+                    @{Html.RenderAction("HeaderCart", "Home");}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!--header bottom end-->
