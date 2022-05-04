@@ -1,0 +1,86 @@
+﻿@model List<WebPerfume.Models.CartItem>
+@{
+    decimal? totalmoney = 0;
+    foreach (var item in Model)
+    {
+        totalmoney += item.Total;
+    }
+}
+<div class="mini_cart_wrapper text-right">
+    <a href="javascript:void(0)"><span class="fas fa-shopping-cart"></span>@*$67.71*@ </a>
+    <span class="cart_quantity">@Model.Count</span>
+    <!--mini cart-->
+    <div class="mini_cart">
+        @foreach (var item in Model)
+        {
+            <div class="cart_item">
+                <div class="cart_img">
+                    <a href="/Product/Detail/@item.Product.Id"><img src="@item.Product.Image" alt=""></a>
+                </div>
+                <div class="cart_info">
+                    <a href="/Product/Detail/@item.Product.Id">@item.Product.Name</a>
+
+                    <span class="quantity">Số lượng: @item.quantity</span>
+                    @if (item.Product.PromotionPrice != null)
+                    {
+                        <span class="price_cart">@((item.Product.PromotionPrice.GetValueOrDefault(0)*item.quantity).ToString("N0"))</span>
+                    }
+                    else
+                    {
+                        <span class="price_cart">@((item.Product.Price.GetValueOrDefault(0)*item.quantity).ToString("N0"))</span>
+                    }
+
+
+                </div>
+                @*<div class="cart_remove">
+                    <a href="#" data-id="@item.Product.Id" class="btn-delete"><i class="fas fa-times"></i></a>
+                </div>*@
+            </div>
+        }
+
+
+        <div class="mini_cart_table">
+            <div class="cart_total mt-10">
+                <span>Tổng số tiền:</span>
+                <span class="price">@((totalmoney.GetValueOrDefault(0)).ToString("N0"))</span>
+            </div>
+        </div>
+
+        <div class="mini_cart_footer">
+            <div class="cart_button">
+                <a href="/Cart">Giỏ hàng</a>
+            </div>
+            <div class="cart_button">
+                <a href="/Cart/Payment">Thanh toán</a>
+            </div>
+
+        </div>
+
+    </div>
+    <!--mini cart end-->
+</div>
+<script>
+    var cart = {
+        init: function () {
+            cart.registerEvent();
+        },
+        registerEvent: function () {
+            $('.btn-delete').off('click').on('click', function (e) {
+                e.preventDefault();
+                $.ajax({
+                    data: { id: $(this).data('id') },
+                    url: '/Cart/Delete',
+                    dataType: 'json',
+                    type: 'POST',
+                    success: function (res) {
+                        if (res.status == true) {
+                            window.location.href = "/Cart";
+                        }
+
+                    }
+                })
+            });
+        }
+    }
+    cart.init();
+</script>

@@ -1,0 +1,138 @@
+﻿@model PagedList.IPagedList<WebPerfume.Models.EF.Order>
+@using PagedList.Mvc;
+
+@{
+    ViewBag.Title = "Index";
+    Layout = "~/Areas/Admin/Views/Shared/_AdminLayout.cshtml";
+}
+
+<h2>Đơn hàng</h2>
+
+
+@*<a href="/Admin/Category/Create" class="btn btn-success" style="margin-bottom:10px;float:left;">Tạo mới</a>*@
+@using (Html.BeginForm("ExportToExcel", "Order", FormMethod.Post))
+{
+    <input type="submit" value="Export to Excel" class="btn btn-success mb-2" />
+}
+
+@using (Html.BeginForm("Index", "Order", FormMethod.Get))
+{
+
+    <div class="input-group mb-2" style="float:right;">
+        <input type="text" class="col-lg-4 form-control" style="width:400px;display:inline;margin-right:5px;" name="searchString" value="@ViewBag.SearchString" placeholder="Tìm kiếm..." />
+
+        <button class="btn btn-primary" type="submit">
+            Tìm kiếm
+        </button>
+
+    </div>
+
+}
+<table class="table mt-2">
+    <thead class="thead-dark">
+        <tr>
+            <th>
+                Tên khách hàng
+            </th>
+            <th>
+                Điện thoại
+            </th>
+            <th>
+                Địa chỉ
+            </th>
+            <th>
+                Email
+            </th>
+            <th>
+                Tạo ngày
+            </th>
+            <th>
+                Trạng thái
+            </th>
+            <th>
+                Hành động
+            </th>
+        </tr>
+    </thead>
+    @foreach (var item in Model)
+    {
+        <tbody>
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.ShipName)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.ShipMobile)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.ShipAddress)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.ShipEmail)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.CreateDate)
+                </td>
+                <td>
+                    <a href="#" class="btn-active btn btn-primary btn-sm" data-id="@item.Id">@(item.Status ? "Đã xác nhận" : "Chưa xác nhận")</a>
+                </td>
+                <td>
+                    <a href="@Url.Action("Details", new { id = item.Id })" class="btn btn-warning dialog-link">Chi tiết</a>
+
+                    <a onclick="return confirm('Bạn có chắc chắn muốn xóa đơn hàng này?')" href="/Admin/Order/Delete/@item.Id" class="btn btn-danger mt-2">Hủy đơn hàng</a>
+                </td>
+            </tr>
+        </tbody>
+    }
+
+</table>
+
+@if (Model.Count() <= 0)
+{
+    <div class="text-center text-danger">Không có dữ liệu</div>
+}
+<div class="panel-footer">
+    <nav aria-label="Page navigation example">
+        <ul class="pagination">
+            
+            <li>
+                @Html.PagedListPager(Model, page => Url.Action("Index", new { page, @searchString = @ViewBag.SearchString }))
+            </li>
+        </ul>
+    </nav>
+</div>
+
+
+@section Scripts{
+    <script>
+        var order = {
+            init: function () {
+                order.registerEvents();
+            },
+            registerEvents: function () {
+                $('.btn-active').off('click').on('click', function (e) {
+                    e.preventDefault();
+                    var btn = $(this);
+                    var id = btn.data('id');
+                    $.ajax({
+                        url: "/Admin/Order/ChangeStatus",
+                        data: { id: id },
+                        dataType: "json",
+                        type: "POST",
+                        success: function (response) {
+                            console.log(response);
+                            if (response.status == true) {
+                                btn.text('Đã xác nhận');
+                            }
+                            else {
+                                btn.text('Chưa xác nhận');
+                            }
+                        }
+                    })
+                });
+            },
+        }
+        order.init();
+    </script>
+}
+

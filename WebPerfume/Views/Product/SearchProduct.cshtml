@@ -1,0 +1,139 @@
+﻿@model List<WebPerfume.Models.EF.Product>
+@{
+    ViewBag.Title = "SearchProduct";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+
+    var keyword = ViewBag.Keyword;
+}
+
+<!--breadcrumbs area start-->
+@*<div class="breadcrumbs_area">
+    <div class="container">
+        <div class="row">
+            <div class="col-12">
+                <div class="breadcrumb_content">
+                    <ul>
+                        <li><a href="index.html">home</a></li>
+
+                        <li>shop</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>*@
+<!--breadcrumbs area end-->
+<!--shop  area start-->
+<div class="shop_area shop_fullwidth">
+    <div class="container">
+        <div class="row">
+            <div class="col-12">
+                <!--shop wrapper start-->
+                <!--shop toolbar start-->
+                <div class="shop_title">
+                    <h1>Có @Model.Count sản phẩm với tìm kiếm: @keyword</h1>
+                </div>
+                
+                <!--shop toolbar end-->
+
+                <div class="row shop_wrapper grid_4">
+                    @foreach (var item in Model)
+                    {
+                        <div class="col-lg-3 col-md-4 col-sm-6 col-12 ">
+                            <div class="single_product">
+                                <div class="product_thumb">
+                                    <a class="primary_img" href="/Product/Detail/@item.Id">
+                                        <img src="@item.Image" alt="">
+                                    </a>
+                                    <a class="secondary_img" href="product-details.html">
+                                        <img src="assets/img/product/product14.jpg" alt="">
+                                    </a>
+                                    @if (item.PercentPromotion != 0)
+                                    {
+                                        <div class="label_product">
+                                            <span class="label_sale">-@item.PercentPromotion%</span>
+                                        </div>
+                                    }
+
+                                    <div class="action_links">
+                                        <ul>
+                                            <li class="quick_button">
+                                                <a href="/Product/Detail/@item.Id" data-toggle="modal"
+                                                   data-target="#modal_box" title="quick view">
+                                                    <i class="far fa-eye"></i>
+                                                </a>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                    <div class="add_to_cart">
+                                        <a href="/Cart/AddItem?id=@item.Id&quantity=1" title="add to cart">Mua ngay</a>
+                                    </div>
+                                </div>
+                                <div class="product_content grid_content">
+                                    <p class="manufacture_product"><a href="/Category/Index/@item.CategoryId">@item.Category.Name</a></p>
+                                    <h4><a href="/Product/Detail/@item.Id">@item.Name</a></h4>
+                                    @if (item.PromotionPrice != null)
+                                    {
+                                        <div class="price_box">
+                                            <span class="old_price">@((item.Price.GetValueOrDefault(0)).ToString("N0"))đ</span>
+                                            <span class="current_price ml-5">@((item.PromotionPrice.GetValueOrDefault(0)).ToString("N0"))đ</span>
+                                        </div>
+                                    }
+                                    else
+                                    {
+                                        <div class="price_box" style="float:right;">
+                                            <span class="current_price">@((item.Price.GetValueOrDefault(0)).ToString("N0"))đ</span>
+                                        </div>
+                                    }
+                                </div>
+                                <div class="product_content list_content">
+                                    <div class="left_caption">
+                                        <p class="manufacture_product"><a href="#">Studio Design</a></p>
+                                        <h4><a href="product-details.html">Juicy Couture Juicy Quilted Terry...</a></h4>
+                                        <div class="product_desc">
+                                            <p>
+                                                Lorem ipsum dolor sit amet, consectetur adipisicing elit. Nobis ad, iure
+                                                incidunt. Ab consequatur temporibus non eveniet inventore doloremque
+                                                necessitatibus sed, ducimus quisquam, ad asperiores
+                                            </p>
+                                        </div>
+                                    </div>
+                                    <div class="right_caption">
+                                        <div class="text_available">
+                                            <p>availabe: <span>99 in stock</span></p>
+                                        </div>
+                                        <div class="price_box">
+                                            <span class="old_price">$420.00</span>
+                                            <span class="current_price">$160.00</span>
+                                        </div>
+                                        <div class="cart_links_btn">
+                                            <a href="#" title="add to cart">add to cart</a>
+                                        </div>
+                                        <div class="action_list_links">
+                                            <ul>
+                                               
+                                                <li class="quick_button">
+                                                    <a href="#" data-toggle="modal"
+                                                       data-target="#modal_box" title="quick view">
+                                                        <i class="icon-eye"></i>
+                                                    </a>
+                                                </li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    }
+
+
+                </div>
+
+                
+                <!--shop toolbar end-->
+                <!--shop wrapper end-->
+            </div>
+        </div>
+    </div>
+</div>
+<!--shop  area end-->
