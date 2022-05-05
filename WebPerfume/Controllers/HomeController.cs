@@ -13,19 +13,19 @@ namespace WebPerfume.Controllers
     {
         private string CartSession = "CartSession";
         public ActionResult Index()
-        {
-            ViewBag.ListHotDeal = new ProductDAO().ListHotDeal(6);
-            ViewBag.ListNewSamSung = new ProductDAO().ListNewSamSung();
-            ViewBag.ListNewSony = new ProductDAO().ListNewSony();
-            ViewBag.ListNewLG = new ProductDAO().ListNewLG();
-            ViewBag.ListNews = new NewsDAO().ListHome(3);
+        {            
             ViewBag.ListCategory = new CategoryDAO().ListName();
-            
             ViewBag.FeaturedProduct = new ProductDAO().FeaturedProduct();
-            ViewBag.ListFeaturedSamSung = new ProductDAO().ListFeaturedSamSung();
-            ViewBag.ListFeaturedSony = new ProductDAO().ListFeaturedSony();
-            ViewBag.ListFeaturedLG = new ProductDAO().ListFeaturedLG();
-            ViewBag.ListFeaturedToshiba = new ProductDAO().ListFeaturedToshiba();
+            ViewBag.ListHotDeal = new ProductDAO().ListHotDeal(6);
+            ViewBag.ListNews = new NewsDAO().ListHome(3);
+
+            ViewBag.ListNewChanel = new ProductDAO().ListNewChanel();
+            ViewBag.ListNewDior = new ProductDAO().ListNewDior();
+            ViewBag.ListNewCalvinKlein = new ProductDAO().ListNewCalvinKlein();
+            ViewBag.ListFeaturedGucci = new ProductDAO().ListFeaturedGucci();
+            ViewBag.ListFeaturedDiory = new ProductDAO().ListFeaturedDiory();
+            ViewBag.ListFeaturedCalvinKlein = new ProductDAO().ListFeaturedCalvinKlein();
+
             return View();
         }
 

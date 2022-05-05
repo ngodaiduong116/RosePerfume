@@ -3,16 +3,16 @@
     Layout = "~/Views/Shared/_Layout.cshtml";
 
     var listhotdeal = (List<WebPerfume.Models.EF.Product>)ViewBag.ListHotDeal;
-    var listnewsamsung = (List<WebPerfume.Models.EF.Product>)ViewBag.ListNewSamSung;
-    var listnewsony = (List<WebPerfume.Models.EF.Product>)ViewBag.ListNewSony;
-    var listnewlg = (List<WebPerfume.Models.EF.Product>)ViewBag.ListNewLG;
     var listnews = (List<WebPerfume.Models.EF.News>)ViewBag.ListNews;
     var listcategory = (List<WebPerfume.Models.EF.Category>)ViewBag.ListCategory;
     var featuredproduct = (WebPerfume.Models.EF.Product)ViewBag.FeaturedProduct;
-    var listfeaturedsamsung = (List<WebPerfume.Models.EF.Product>)ViewBag.ListFeaturedSamSung;
-    var listfeaturedsony = (List<WebPerfume.Models.EF.Product>)ViewBag.ListFeaturedSony;
-    var listfeaturedlg = (List<WebPerfume.Models.EF.Product>)ViewBag.ListFeaturedLG;
-    var listfeaturedtoshiba = (List<WebPerfume.Models.EF.Product>)ViewBag.ListFeaturedToshiba;
+
+    var ListNewChanel = (List<WebPerfume.Models.EF.Product>)ViewBag.ListNewChanel;
+    var ListNewDior = (List<WebPerfume.Models.EF.Product>)ViewBag.ListNewDior;
+    var ListNewCalvinKlein = (List<WebPerfume.Models.EF.Product>)ViewBag.ListNewCalvinKlein;
+    var ListFeaturedGucci = (List<WebPerfume.Models.EF.Product>)ViewBag.ListFeaturedGucci;
+    var ListFeaturedDiory = (List<WebPerfume.Models.EF.Product>)ViewBag.ListFeaturedDiory;
+    var ListFeaturedCalvinKlein = (List<WebPerfume.Models.EF.Product>)ViewBag.ListFeaturedCalvinKlein;
 
 }
 
@@ -175,35 +175,35 @@
                     <div class="product_tab_button">
                         <ul class=" nav" role="tablist">
                             <li class="wow fadeInUp" data-wow-delay="0.1s">
-                                <a class="active" data-toggle="tab" href="#cables" role="tab" aria-controls="cables"
+                                <a class="active" data-toggle="tab" href="#Chanel" role="tab" aria-controls="Chanel"
                                    aria-selected="true">Chanel</a>
                             </li>
                             <li class="wow fadeInUp" data-wow-delay="0.2s">
-                                <a data-toggle="tab" href="#batteries" role="tab" aria-controls="batteries"
+                                <a data-toggle="tab" href="#Dior" role="tab" aria-controls="Dior"
                                    aria-selected="false">Dior</a>
                             </li>
                             <li class="wow fadeInUp" data-wow-delay="0.3s">
-                                <a data-toggle="tab" href="#chargers" role="tab" aria-controls="chargers"
+                                <a data-toggle="tab" href="#CalvinKlein" role="tab" aria-controls="CalvinKlein"
                                    aria-selected="false">Calvin Klein</a>
                             </li>
                             <li class="wow fadeInUp" data-wow-delay="0.4s">
-                                <a data-toggle="tab" href="#cases" role="tab" aria-controls="cases"
+                                <a data-toggle="tab" href="#Gucci" role="tab" aria-controls="Gucci"
                                    aria-selected="false">Gucci</a>
                             </li>
                             <li class="wow fadeInUp" data-wow-delay="0.1s">
-                                <a class="tab" data-toggle="tab" href="#cables" role="tab" aria-controls="cables"
+                                <a class="tab" data-toggle="tab" href="#Guerlain" role="tab" aria-controls="Guerlain"
                                    aria-selected="true">Guerlain</a>
                             </li>
                             <li class="wow fadeInUp" data-wow-delay="0.2s">
-                                <a data-toggle="tab" href="#batteries" role="tab" aria-controls="batteries"
+                                <a data-toggle="tab" href="#HugoBoss" role="tab" aria-controls="HugoBoss"
                                    aria-selected="false">Hugo Boss</a>
                             </li>
                             <li class="wow fadeInUp" data-wow-delay="0.3s">
-                                <a data-toggle="tab" href="#chargers" role="tab" aria-controls="chargers"
+                                <a data-toggle="tab" href="#Lancôme" role="tab" aria-controls="Lancôme"
                                    aria-selected="false">Lancôme</a>
                             </li>
                             <li class="wow fadeInUp" data-wow-delay="0.4s">
-                                <a data-toggle="tab" href="#cases" role="tab" aria-controls="cases"
+                                <a data-toggle="tab" href="#Versace" role="tab" aria-controls="Versace"
                                    aria-selected="false">Versace</a>
                             </li>
                         </ul>
@@ -211,11 +211,11 @@
                 </div>
             </div>
         </div>
-
+        @*new chanel*@
         <div class="tab-content wow fadeInUp">
-            <div class="tab-pane fade show active" id="automobiles" role="tabpanel">
+            <div class="tab-pane fade show active" id="Chanel" role="tabpanel">
                 <div class="product_carousel product_column5 owl-carousel">
-                    @foreach (var item in listnewsamsung)
+                    @foreach (var item in ListNewChanel)
                     {
                         <div class="single_product">
                             <div class="product_thumb">
@@ -223,7 +223,7 @@
                                     <img src="@item.Image" alt="">
                                 </a>
                                 <a class="secondary_img" href="/Product/Detail/@item.Id">
-                                    @*<img src="~/Content/Client/img/product16.jpg" alt="">*@
+                                    <img src="@item.Image2" alt="">
                                 </a>
                                 @if (item.PercentPromotion != 0)
                                 {
@@ -268,9 +268,12 @@
                     }
                 </div>
             </div>
-            <div class="tab-pane fade" id="beauty" role="tabpanel">
+        </div>
+        @*new dior*@
+        <div class="tab-content wow fadeInUp">
+            <div class="tab-pane fade" id="Dior" role="tabpanel">
                 <div class="product_carousel product_column5 owl-carousel">
-                    @foreach (var item in listnewsony)
+                    @foreach (var item in ListNewDior)
                     {
                         <div class="single_product">
                             <div class="product_thumb">
@@ -278,7 +281,7 @@
                                     <img src="@item.Image" alt="">
                                 </a>
                                 <a class="secondary_img" href="/Product/Detail/@item.Id">
-                                    @*<img src="~/Content/Client/img/product8.jpg" alt="">*@
+                                    <img src="@item.Image2" alt="">
                                 </a>
                                 @if (item.PercentPromotion != 0)
                                 {
@@ -286,7 +289,6 @@
                                         <span class="label_sale">-@item.PercentPromotion%</span>
                                     </div>
                                 }
-
                                 <div class="action_links">
                                     <ul>
 
@@ -324,17 +326,20 @@
                     }
                 </div>
             </div>
-            <div class="tab-pane fade" id="consoles" role="tabpanel">
+        </div>
+        @*new ck*@
+        <div class="tab-content wow fadeInUp">
+            <div class="tab-pane fade" id="CalvinKlein" role="tabpanel">
                 <div class="product_carousel product_column5 owl-carousel">
-                    @foreach (var item in listnewlg)
+                    @foreach (var item in ListNewCalvinKlein)
                     {
                         <div class="single_product">
                             <div class="product_thumb">
-                                <a class="primary_img" href="product-details.html">
+                                <a class="primary_img" href="/Product/Detail/@item.Id">
                                     <img src="@item.Image" alt="">
                                 </a>
-                                <a class="secondary_img" href="product-details.html">
-                                    @*<img src="~/Content/Client/img/product6.jpg" alt="">*@
+                                <a class="secondary_img" href="/Product/Detail/@item.Id">
+                                    <img src="@item.Image2" alt="">
                                 </a>
                                 @if (item.PercentPromotion != 0)
                                 {
@@ -342,7 +347,182 @@
                                         <span class="label_sale">-@item.PercentPromotion%</span>
                                     </div>
                                 }
+                                <div class="action_links">
+                                    <ul>
 
+                                        <li class="quick_button">
+                                            <a href="/Product/Detail/@item.Id" data-toggle="modal"
+                                               data-target="#modal_box" title="quick view">
+                                                <i class="far fa-eye"></i>
+                                            </a>
+                                        </li>
+                                    </ul>
+                                </div>
+                                <div class="add_to_cart">
+                                    <a href="/Cart/AddItem?id=@item.Id&quantity=1" title="add to cart">Mua ngay</a>
+                                </div>
+                            </div>
+                            <div class="product_content">
+                                <p class="manufacture_product"><a href="/Category/Index/@item.CategoryId">@item.Category.Name</a></p>
+                                <h4><a href="/Product/Detail/@item.Id">@item.Name</a></h4>
+
+                                @if (item.PromotionPrice != null)
+                                {
+                                    <div class="price_box">
+                                        <span class="old_price">@((item.Price.GetValueOrDefault(0)).ToString("N0"))đ</span>
+                                        <span class="current_price">@((item.PromotionPrice.GetValueOrDefault(0)).ToString("N0"))đ</span>
+                                    </div>
+                                }
+                                else
+                                {
+                                    <div class="price_box" style="float:right;">
+                                        <span class="current_price">@((item.Price.GetValueOrDefault(0)).ToString("N0"))đ</span>
+                                    </div>
+                                }
+                            </div>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+
+
+        @*Feature Gucci*@
+        <div class="tab-content wow fadeInUp">
+            <div class="tab-pane fade" id="automobiles" role="tabpanel">
+                <div class="product_carousel product_column5 owl-carousel">
+                    @foreach (var item in ListFeaturedGucci)
+                    {
+                        <div class="single_product">
+                            <div class="product_thumb">
+                                <a class="primary_img" href="/Product/Detail/@item.Id">
+                                    <img src="@item.Image" alt="">
+                                </a>
+                                <a class="secondary_img" href="/Product/Detail/@item.Id">
+                                    <img src="@item.Image2" alt="">
+                                </a>
+                                @if (item.PercentPromotion != 0)
+                                {
+                                    <div class="label_product">
+                                        <span class="label_sale">-@item.PercentPromotion%</span>
+                                    </div>
+                                }
+                                <div class="action_links">
+                                    <ul>
+
+                                        <li class="quick_button">
+                                            <a href="/Product/Detail/@item.Id" data-toggle="modal"
+                                               data-target="#modal_box" title="quick view">
+                                                <i class="far fa-eye"></i>
+                                            </a>
+                                        </li>
+                                    </ul>
+                                </div>
+                                <div class="add_to_cart">
+                                    <a href="/Cart/AddItem?id=@item.Id&quantity=1" title="add to cart">Mua ngay</a>
+                                </div>
+                            </div>
+                            <div class="product_content">
+                                <p class="manufacture_product"><a href="/Category/Index/@item.CategoryId">@item.Category.Name</a></p>
+                                <h4><a href="/Product/Detail/@item.Id">@item.Name</a></h4>
+
+                                @if (item.PromotionPrice != null)
+                                {
+                                    <div class="price_box">
+                                        <span class="old_price">@((item.Price.GetValueOrDefault(0)).ToString("N0"))đ</span>
+                                        <span class="current_price">@((item.PromotionPrice.GetValueOrDefault(0)).ToString("N0"))đ</span>
+                                    </div>
+                                }
+                                else
+                                {
+                                    <div class="price_box" style="float:right;">
+                                        <span class="current_price">@((item.Price.GetValueOrDefault(0)).ToString("N0"))đ</span>
+                                    </div>
+                                }
+                            </div>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+        @*Featured dior*@
+        <div class="tab-content wow fadeInUp">
+            <div class="tab-pane fade" id="automobiles" role="tabpanel">
+                <div class="product_carousel product_column5 owl-carousel">
+                    @foreach (var item in ListFeaturedDiory)
+                    {
+                        <div class="single_product">
+                            <div class="product_thumb">
+                                <a class="primary_img" href="/Product/Detail/@item.Id">
+                                    <img src="@item.Image" alt="">
+                                </a>
+                                <a class="secondary_img" href="/Product/Detail/@item.Id">
+                                    <img src="@item.Image2" alt="">
+                                </a>
+                                @if (item.PercentPromotion != 0)
+                                {
+                                    <div class="label_product">
+                                        <span class="label_sale">-@item.PercentPromotion%</span>
+                                    </div>
+                                }
+                                <div class="action_links">
+                                    <ul>
+
+                                        <li class="quick_button">
+                                            <a href="/Product/Detail/@item.Id" data-toggle="modal"
+                                               data-target="#modal_box" title="quick view">
+                                                <i class="far fa-eye"></i>
+                                            </a>
+                                        </li>
+                                    </ul>
+                                </div>
+                                <div class="add_to_cart">
+                                    <a href="/Cart/AddItem?id=@item.Id&quantity=1" title="add to cart">Mua ngay</a>
+                                </div>
+                            </div>
+                            <div class="product_content">
+                                <p class="manufacture_product"><a href="/Category/Index/@item.CategoryId">@item.Category.Name</a></p>
+                                <h4><a href="/Product/Detail/@item.Id">@item.Name</a></h4>
+
+                                @if (item.PromotionPrice != null)
+                                {
+                                    <div class="price_box">
+                                        <span class="old_price">@((item.Price.GetValueOrDefault(0)).ToString("N0"))đ</span>
+                                        <span class="current_price">@((item.PromotionPrice.GetValueOrDefault(0)).ToString("N0"))đ</span>
+                                    </div>
+                                }
+                                else
+                                {
+                                    <div class="price_box" style="float:right;">
+                                        <span class="current_price">@((item.Price.GetValueOrDefault(0)).ToString("N0"))đ</span>
+                                    </div>
+                                }
+                            </div>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+        @*Featured ck*@
+        <div class="tab-content wow fadeInUp">
+            <div class="tab-pane fade" id="automobiles" role="tabpanel">
+                <div class="product_carousel product_column5 owl-carousel">
+                    @foreach (var item in ListFeaturedCalvinKlein)
+                    {
+                        <div class="single_product">
+                            <div class="product_thumb">
+                                <a class="primary_img" href="/Product/Detail/@item.Id">
+                                    <img src="@item.Image" alt="">
+                                </a>
+                                <a class="secondary_img" href="/Product/Detail/@item.Id">
+                                    <img src="@item.Image2" alt="">
+                                </a>
+                                @if (item.PercentPromotion != 0)
+                                {
+                                    <div class="label_product">
+                                        <span class="label_sale">-@item.PercentPromotion%</span>
+                                    </div>
+                                }
                                 <div class="action_links">
                                     <ul>
 

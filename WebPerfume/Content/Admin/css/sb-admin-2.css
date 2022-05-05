@@ -10116,9 +10116,9 @@ a:focus {
   transform: rotate(15deg);
 }
 
-.rotate-n-15 {
+/*.rotate-n-15 {
   transform: rotate(-15deg);
-}
+}*/
 
 .dropdown .dropdown-menu {
   font-size: 0.85rem;

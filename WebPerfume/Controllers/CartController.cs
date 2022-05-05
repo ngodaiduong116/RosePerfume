@@ -191,6 +191,7 @@ namespace WebPerfume.Controllers
                 }
                 Session.Remove(CartSession);
                 SetAlert("Mua hàng thành công", "success");
+
             }
             catch (Exception ex)
             {

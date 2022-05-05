@@ -92,57 +92,52 @@ namespace WebPerfume.Models.DAO
             }
         }
 
+        public List<Product> ListRelated(int id)
+        {
+            int? categoryid = db.Products.Where(x => x.Id == id).Select(x => x.CategoryId).FirstOrDefault();
+            var prd = db.Products.Where(x => x.CategoryId == categoryid && x.Id != id).ToList();
+            return prd;
+        }
+
         public List<Product> ListHotDeal(int top)
         {
             return db.Products.Where(n => n.TopHot == true).Take(top).ToList();
         }
-
-        public List<Product> ListNewSamSung()
-        {
-            return db.Products.Where(n => n.CategoryId == 1).OrderByDescending(x => x.Id).Take(6).ToList();
-        }
-
-        public List<Product> ListNewSony()
-        {
-            return db.Products.Where(n => n.CategoryId == 2).OrderByDescending(x => x.Id).Take(6).ToList();
-        }
-
-        public List<Product> ListNewLG()
-        {
-            return db.Products.Where(n => n.CategoryId == 3).OrderByDescending(x => x.Id).Take(6).ToList();
-        }
-
         public Product FeaturedProduct()
         {
             var prd = db.Products.Where(x => x.Id == 2).FirstOrDefault();
             return prd;
         }
 
-        public List<Product> ListFeaturedSamSung()
+        public List<Product> ListNewChanel()
         {
-            return db.Products.Where(x => x.CategoryId == 1 && x.Featured == true).Take(6).ToList();
+            return db.Products.Where(n => n.CategoryId == 1).OrderByDescending(x => x.Id).Take(6).ToList();
         }
 
-        public List<Product> ListFeaturedSony()
+        public List<Product> ListNewDior()
+        {
+            return db.Products.Where(n => n.CategoryId == 2).OrderByDescending(x => x.Id).Take(6).ToList();
+        }
+
+        public List<Product> ListNewCalvinKlein()
+        {
+            return db.Products.Where(n => n.CategoryId == 3).OrderByDescending(x => x.Id).Take(6).ToList();
+        }
+     
+
+        public List<Product> ListFeaturedGucci()
+        {
+            return db.Products.Where(x => x.CategoryId == 4 && x.Featured == true).Take(6).ToList();
+        }
+
+        public List<Product> ListFeaturedDiory()
         {
             return db.Products.Where(x => x.CategoryId == 2 && x.Featured == true).Take(6).ToList();
         }
 
-        public List<Product> ListFeaturedLG()
+        public List<Product> ListFeaturedCalvinKlein()
         {
             return db.Products.Where(x => x.CategoryId == 3 && x.Featured == true).Take(6).ToList();
-        }
-
-        public List<Product> ListFeaturedToshiba()
-        {
-            return db.Products.Where(x => x.CategoryId == 4 && x.TopHot == true).Take(6).ToList();
-        }
-
-        public List<Product> ListRelated(int id)
-        {
-            int? categoryid = db.Products.Where(x => x.Id == id).Select(x => x.CategoryId).FirstOrDefault();
-            var prd = db.Products.Where(x => x.CategoryId == categoryid && x.Id != id).ToList();
-            return prd;
         }
     }
 }
