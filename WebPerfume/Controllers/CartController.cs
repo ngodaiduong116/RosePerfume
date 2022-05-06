@@ -1,12 +1,21 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
+using System.Net;
+using System.Text;
 using System.Web;
 using System.Web.Mvc;
 using System.Web.Script.Serialization;
+using System.Web.UI;
+using WebPerfume.Common;
 using WebPerfume.Models;
 using WebPerfume.Models.DAO;
 using WebPerfume.Models.EF;
+using Newtonsoft.Json;
+using System.Net.Http;
+using System.Reflection;
+using System.Threading.Tasks;
 
 namespace WebPerfume.Controllers
 {
@@ -17,6 +26,11 @@ namespace WebPerfume.Controllers
         // GET: Cart
         public ActionResult Index()
         {
+            GetTemplate(new Order()
+            {
+                ShipAddress = "Hihihi",
+            });
+
             var cart = Session[CartSession];
             var list = new List<CartItem>();
             if (cart != null)
@@ -29,6 +43,50 @@ namespace WebPerfume.Controllers
                 ViewBag.SoLuong = 0;
             }
             return View(list);
+        }
+
+
+        public async Task GetTemplate(Order obj)
+        {
+            try
+            {
+                var domainName = new Uri($"{Request.Url.Scheme}://{Request.Url.Authority}/Cart/Test");
+
+                //var httpClient = new WebClient();
+                //httpClient.Encoding = Encoding.UTF8;
+                //var abcd = httpClient.UploadData(domainName, Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(obj)));
+                ////var str = httpClient.DownloadString(domainName);
+                //var aed = Encoding.UTF8.GetString(abcd);
+
+                HttpClient client = new HttpClient();
+                var values = db.Accounts.FirstOrDefault(x => x.Id == 1);
+                var data = values.GetType().GetProperties(BindingFlags.Instance | BindingFlags.Public).ToDictionary(prop => prop.Name, prop => (string)prop.GetValue(values, null));
+                var content = new FormUrlEncodedContent(data);
+                var response = await client.PostAsync(domainName, content);
+                var responseString = await response.Content.ReadAsStringAsync();
+            }
+            catch(Exception ex)
+            {
+
+            }
+        }
+        public static string RenderPartialToString(string controlName, object viewData)
+        {
+            ViewPage viewPage = new ViewPage() { ViewContext = new ViewContext() };
+
+            viewPage.ViewData = new ViewDataDictionary(viewData);
+            viewPage.Controls.Add(viewPage.LoadControl(controlName));
+
+            StringBuilder sb = new StringBuilder();
+            using (StringWriter sw = new StringWriter(sb))
+            {
+                using (HtmlTextWriter tw = new HtmlTextWriter(sw))
+                {
+                    viewPage.RenderControl(tw);
+                }
+            }
+
+            return sb.ToString();
         }
 
         public ActionResult AddItem(int id, int quantity)
@@ -105,7 +163,7 @@ namespace WebPerfume.Controllers
                 status = true
             });
         }
-
+        
         public JsonResult DeleteAll()
         {
             Session[CartSession] = null;
@@ -143,7 +201,7 @@ namespace WebPerfume.Controllers
         [HttpPost]
         public ActionResult Payment(string shipName, string mobile, string address, string email)
         {
-            var order = new Order();
+            Order order = new Order();
             if ((string)Session["UserClientUsername"] != "")
             {
                 var username = (string)Session["UserClientUsername"];
@@ -189,9 +247,12 @@ namespace WebPerfume.Controllers
                     var product = new ProductDAO();
                     product.setQuantity(orderDetail.ProductId, orderDetail.Quantity);
                 }
-                Session.Remove(CartSession);
+                Session.Remove(CartSession); 
                 SetAlert("Mua hàng thành công", "success");
 
+                MailHelper obj = new MailHelper();
+                //string dd = System.IO.File.ReadAllText(Server.MapPath("~/Common/Template/FormMail.html"));
+                obj.SendMail("s2lonely.T@gmail.com", "Test", "Anh Toán ơi");
             }
             catch (Exception ex)
             {
@@ -204,6 +265,19 @@ namespace WebPerfume.Controllers
         public ActionResult Success()
         {
             return View();
+        }
+
+        public ActionResult Test()
+        {
+            using (var memoryStream = new MemoryStream())
+            {
+                Request.InputStream.CopyTo(memoryStream);
+                var byee= memoryStream.ToArray();
+                var str = Encoding.UTF8.GetString(byee);
+                var order = JsonConvert.DeserializeObject<Order>(str);
+                return PartialView(order);
+            }
+            
         }
     }
 }
