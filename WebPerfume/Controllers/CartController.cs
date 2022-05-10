@@ -24,11 +24,11 @@ namespace WebPerfume.Controllers
         RosePerfumeDBModel db = new RosePerfumeDBModel();
         private string CartSession = "CartSession";
         // GET: Cart
-        public ActionResult Index()
+        public async Task<ActionResult> Index()
         {
-            GetTemplate(new Order()
-            {
-                ShipAddress = "Hihihi",
+            await GetTemplate( new {
+                name = "Ngo Dai Duong",
+                Age = 18
             });
 
             var cart = Session[CartSession];
@@ -46,24 +46,24 @@ namespace WebPerfume.Controllers
         }
 
 
-        public async Task GetTemplate(Order obj)
+        public async Task GetTemplate(object obj)
         {
             try
             {
-                var domainName = new Uri($"{Request.Url.Scheme}://{Request.Url.Authority}/Cart/Test");
+                var domainName = new Uri($"{Request.Url.Scheme}://{Request.Url.Authority}/Cart/TemplateSendMail");
+                byte[] data = Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(obj));
+                var httpClient = new WebClient();
+                httpClient.Encoding = Encoding.UTF8;
+                var uploadPage = httpClient.UploadData(domainName, data);
+                var str = httpClient.DownloadString(domainName);
+                var result = Encoding.UTF8.GetString(uploadPage);
 
-                //var httpClient = new WebClient();
-                //httpClient.Encoding = Encoding.UTF8;
-                //var abcd = httpClient.UploadData(domainName, Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(obj)));
-                ////var str = httpClient.DownloadString(domainName);
-                //var aed = Encoding.UTF8.GetString(abcd);
-
-                HttpClient client = new HttpClient();
-                var values = db.Accounts.FirstOrDefault(x => x.Id == 1);
-                var data = values.GetType().GetProperties(BindingFlags.Instance | BindingFlags.Public).ToDictionary(prop => prop.Name, prop => (string)prop.GetValue(values, null));
-                var content = new FormUrlEncodedContent(data);
-                var response = await client.PostAsync(domainName, content);
-                var responseString = await response.Content.ReadAsStringAsync();
+                //HttpClient client = new HttpClient();
+                //var values = db.Accounts.FirstOrDefault(x => x.Id == 1);
+                //var data = values.GetType().GetProperties(BindingFlags.Instance | BindingFlags.Public).ToDictionary(prop => prop.Name, prop => (string)prop.GetValue(values, null));
+                //var content = new FormUrlEncodedContent(data);
+                //var response = await client.PostAsync(domainName, content);
+                //var responseString = await response.Content.ReadAsStringAsync();
             }
             catch(Exception ex)
             {
@@ -252,7 +252,7 @@ namespace WebPerfume.Controllers
 
                 MailHelper obj = new MailHelper();
                 //string dd = System.IO.File.ReadAllText(Server.MapPath("~/Common/Template/FormMail.html"));
-                obj.SendMail("s2lonely.T@gmail.com", "Test", "Anh Toán ơi");
+                obj.SendMail("xoai2201@gmail.com", "Test", "Hello");
             }
             catch (Exception ex)
             {
@@ -267,7 +267,7 @@ namespace WebPerfume.Controllers
             return View();
         }
 
-        public ActionResult Test()
+        public ActionResult TemplateSendMail()
         {
             using (var memoryStream = new MemoryStream())
             {
