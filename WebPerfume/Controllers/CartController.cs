@@ -31,8 +31,7 @@ namespace WebPerfume.Controllers
             obj.Title = "Test Mail";
             obj.Body = "Html";
             obj.Content = "Thông báo khách hàng đặt hàng thành công";
-            await GetTemplate(obj);
-
+            //await GetTemplate(obj);
 
             var listResult = new List<Cart>();
             if ((string)Session["UserClientUsername"] != "")
@@ -112,10 +111,10 @@ namespace WebPerfume.Controllers
                 if (getListProductInCart.Count != 0 && getListProductInCart.Exists(x => x.ProductId == id && x.CustomerId == getCus.Id) == true)
                 {
                     var ext = getListProductInCart.Find(x => x.ProductId == id);
-                    if(ext != null)
+                    if (ext != null)
                     {
                         ext.Quantity += quantity;
-                    }                   
+                    }
                 }
                 else
                 {
@@ -173,22 +172,41 @@ namespace WebPerfume.Controllers
 
         public JsonResult Update(string cartModel)
         {
-            var jsonCart = new JavaScriptSerializer().Deserialize<List<CartItem>>(cartModel);
-            var sessionCart = (List<CartItem>)Session[CartSession];
-            foreach (var item in sessionCart)
+            int quantityBefore = 1;
+            try
             {
-                var jsonItem = jsonCart.SingleOrDefault(n => n.Product.Id == item.Product.Id);
-                if (jsonItem != null)
+                var jsonCart = new JavaScriptSerializer().Deserialize<Cart>(cartModel);
+                if ((string)Session["UserClientUsername"] != "")
                 {
-                    item.quantity = jsonItem.quantity;
-                    item.Total = jsonItem.quantity * item.Product.Price;
+                    var userCurrent = (string)Session["UserClientUsername"].ToString();
+                    var getCus = db.Customers.FirstOrDefault(x => x.Username == userCurrent);
+                    var getProductInCart = db.Carts.FirstOrDefault(x => x.CustomerId == getCus.Id && x.ProductId == jsonCart.Product.Id);
+                    quantityBefore = getProductInCart.Quantity;
+                    getProductInCart.Quantity = jsonCart.Quantity;
+                    db.SaveChanges();
                 }
+                else
+                {
+                    var sessionCart = (List<Cart>)Session[CartSession];
+                    var getProduct = sessionCart.Find(x => x.ProductId == jsonCart.Product.Id);
+                    quantityBefore = getProduct.Quantity;
+                    getProduct.Quantity = jsonCart.Quantity;
+                    Session[CartSession] = sessionCart;
+                }
+
+                return Json(new
+                {
+                    status = true,
+                });
             }
-            Session[CartSession] = sessionCart;
-            return Json(new
+            catch
             {
-                status = true
-            });
+                return Json(new
+                {
+                    status = false,
+                    quantity = quantityBefore
+                });
+            }
         }
 
         public JsonResult DeleteAll()
@@ -201,6 +219,7 @@ namespace WebPerfume.Controllers
             });
         }
 
+        // có dùng
         public JsonResult Delete(int id)
         {
             var sessionCart = (List<CartItem>)Session[CartSession];
@@ -215,7 +234,6 @@ namespace WebPerfume.Controllers
         [HttpGet]
         public ActionResult Payment()
         {
-
             var listResult = new List<Cart>();
             if ((string)Session["UserClientUsername"] != "")
             {
@@ -236,57 +254,61 @@ namespace WebPerfume.Controllers
         public ActionResult Payment(string shipName, string mobile, string address, string email)
         {
             Order order = new Order();
+            var listProduct = new List<Cart>();
             if ((string)Session["UserClientUsername"] != "")
             {
                 var username = (string)Session["UserClientUsername"];
                 var customer = db.Customers.Where(x => x.Username == username).FirstOrDefault();
+                order.CustomerId = customer.Id;
                 order.ShipName = customer.Name;
-                order.ShipAddress = customer.Address;
                 order.ShipMobile = customer.Mobile;
+                order.ShipAddress = customer.Address;
                 order.ShipEmail = customer.Email;
+                order.CreateDate = DateTime.Now;
+
+                listProduct = db.Carts.Where(x => x.CustomerId == customer.Id).ToList();
             }
             else
             {
-                order.CreateDate = DateTime.Now;
-                order.ShipAddress = address;
-                order.ShipMobile = mobile;
                 order.ShipName = shipName;
+                order.ShipMobile = mobile;
+                order.ShipAddress = address;
                 order.ShipEmail = email;
+                order.CreateDate = DateTime.Now;
+
+                listProduct = (List<Cart>)Session[CartSession];
             }
             try
             {
-                var id = new OrderDAO().Insert(order);
-                var cart = (List<CartItem>)Session[CartSession];
-                var detailDao = new OrderDetailDAO();
-                //decimal total = 0;
-                foreach (var item in cart)
+                db.Orders.Add(order);
+                db.SaveChanges();
+                foreach (var item in listProduct)
                 {
-                    var orderDetail = new OrderDetail();
-                    orderDetail.ProductId = item.Product.Id;
-                    orderDetail.OrderId = id;
-                    if (item.Product.PromotionPrice != null)
-                    {
-                        orderDetail.Price = item.Product.PromotionPrice;
-                    }
-                    else
-                    {
-                        orderDetail.Price = item.Product.Price;
-                    }
-                    orderDetail.Quantity = item.quantity;
-                    detailDao.Insert(orderDetail);
-
-                    //total += (item.SanPham.Gia.GetValueOrDefault(0) * item.quantity);
-
-                    //Sub quantiy in Product table
-                    var product = new ProductDAO();
-                    product.setQuantity(orderDetail.ProductId, orderDetail.Quantity);
+                    var newOrderDetails = new OrderDetail();
+                    newOrderDetails.OrderId = order.Id;
+                    newOrderDetails.ProductId = item.ProductId;
+                    newOrderDetails.Quantity = item.Quantity;
+                    newOrderDetails.Price = (item.Product.PromotionPrice != null && item.Product.PromotionPrice.Value != 0) ? item.Product.PromotionPrice : item.Product.Price;
+                    newOrderDetails.TotalMoney = newOrderDetails.Quantity * newOrderDetails.Price;
+                    db.OrderDetails.Add(newOrderDetails);
                 }
-                Session.Remove(CartSession);
-                SetAlert("Mua hàng thành công", "success");
 
-                MailHelper obj = new MailHelper();
+                if ((string)Session["UserClientUsername"] != "")
+                {
+                    var username = (string)Session["UserClientUsername"];
+                    var customer = db.Customers.Where(x => x.Username == username).FirstOrDefault();
+                    var getListProductInCart = db.Carts.Where(x => x.CustomerId == customer.Id).ToList();
+                    db.Carts.RemoveRange(getListProductInCart);
+                }
+                else
+                {
+                    Session.Remove(CartSession);
+                }
+                db.SaveChanges();
+                //MailHelper obj = new MailHelper();
                 //string dd = System.IO.File.ReadAllText(Server.MapPath("~/Common/Template/FormMail.html"));
-                obj.SendMail("xoai2201@gmail.com", "Test", "Hello");
+                //obj.SendMail("xoai2201@gmail.com", "Test", "Hello");
+                SetAlert("Mua hàng thành công", "success");
             }
             catch (Exception ex)
             {

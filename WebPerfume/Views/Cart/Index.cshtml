@@ -4,7 +4,6 @@
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-
 @section jsFooter{
     <script src="~/Content/EventJs/cartController.js"></script>
 }
@@ -48,32 +47,41 @@
                                 <tbody>
                                     @foreach (var item in Model)
                                     {
-                                    <tr>
-                                        <td class="product_remove">
-                                            <a href="#" data-id="@item.Product.Id" class="btn-delete"><i class="far fa-trash-alt"></i></a>
-                                        </td>
-                                        <td class="product_thumb">
-                                            <a href="#">
-                                                <img src="@item.Product.Image" width="200px" height="150px" alt="">
-                                            </a>
-                                        </td>
-                                        <td class="product_name"><a href="#">@item.Product.Name</a></td>
-                                        @if (item.Product.PromotionPrice != null)
-                                        {
-                                            <td class="product-price">@item.Product.PromotionPrice.GetValueOrDefault(0).ToString("N0")</td>
-                                        }
-                                        else
-                                        {
-                                            <td class="product-price">@item.Product.Price.GetValueOrDefault(0).ToString("N0")</td>
-                                        }
+                                        <tr>
+                                            <td class="product_remove">
+                                                <a href="#" data-id="@item.Product.Id" class="btn-delete"><i class="far fa-trash-alt"></i></a>
+                                            </td>
+                                            <td class="product_thumb">
+                                                <a href="#">
+                                                    <img src="@item.Product.Image" width="200px" height="150px" alt="">
+                                                </a>
+                                            </td>
+                                            <td class="product_name"><a href="#">@item.Product.Name</a></td>
+                                            @if (item.Product.PromotionPrice != null)
+                                            {
+                                                <td class="product-price">@item.Product.PromotionPrice.GetValueOrDefault(0).ToString("N0")</td>
+                                            }
+                                            else
+                                            {
+                                                <td class="product-price">@item.Product.Price.GetValueOrDefault(0).ToString("N0")</td>
+                                            }
 
-                                        <td class="product_quantity">
-                                            <label>Số lượng</label> <input min="1" max="100" class="txtquantity" onchange="updateQuantity()" data-id="@item.Product.Id" value="@item.Quantity" type="number">
-                                        </td>
-                                        @*<td class="product_total">@((item.Product.PromotionPrice.GetValueOrDefault(0)*item.quantity).ToString("N0"))</td>*@
-                                        <td class="product_total">@(item.Total.ToString("N0"))</td>
-
-                                    </tr>
+                                            <td class="product_quantity">
+                                                <label>Số lượng</label> <input min="1" max="100" onchange="updateQuantity(this.value, @item.Product.Id)" id="Id-@item.Product.Id" class="txtquantity" data-id="@item.Product.Id" value="@item.Quantity" type="number">
+                                            </td>
+                                            @*<td class="product_total">@((item.Product.PromotionPrice.GetValueOrDefault(0)*item.quantity).ToString("N0"))</td>*@
+                                            <td class="product_total"></td>
+                                            <td class="product_total"></td>
+                                            <td class="product_total"></td>
+                                            <td class="product_total"></td>
+                                            <td class="product_total"></td>
+                                            <td class="product_total"></td>
+                                            <td class="product_total"></td>
+                                            <td class="product_total"></td>
+                                            <td class="product_total"></td>
+                                            <td class="product_total"></td>
+                                            <td class="product_total">@(item.Total.ToString("N0"))</td>
+                                        </tr>
                                     }
                                 </tbody>
                             </table>
@@ -82,7 +90,6 @@
                         {
                             <span class="alert alert-danger">Chưa có sản phẩm nào trong giỏ hàng</span>
                         }
-
                     </div>
                     <div class="row" style="float:right;">
                         <div class="cart_submit">
@@ -92,32 +99,33 @@
                 </div>
             </div>
         </div>
-
     </div>
 </div>
 <!--shopping cart area end -->
 
 <script>
-    function updateQuantity() {
-        var listsp = $('.txtquantity');
-        var cartList = [];
-        $.each(listsp, function (i, item) {
-            cartList.push({
-                quantity: $(item).val(),
-                Product: {
-                    Id: $(item).data('id')
-                }
-            });
-        });
+
+    function updateQuantity(value, id) {
+
+        var obj = {
+            Quantity: value,
+            Product: {
+                Id: id
+            }
+        }
 
         $.ajax({
             url: '/Cart/Update',
-            data: { cartModel: JSON.stringify(cartList) },
+            data: { cartModel: JSON.stringify(obj) },
             dataType: 'json',
             type: 'POST',
             success: function (res) {
                 if (res.status == true) {
                     window.location.href = "/Cart";
+                } else {
+                    alert("Lỗi không thể update");
+                    var idRow = `#Id-${id}`;
+                    $(idRow).val(res.quantity);
                 }
 
             }
