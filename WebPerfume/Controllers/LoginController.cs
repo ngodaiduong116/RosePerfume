@@ -13,7 +13,7 @@ namespace WebPerfume.Controllers
         // GET: Login
         public ActionResult Index()
         {
-            if (!Session["UserClient"].Equals(""))
+            if (!Session["UserClient"].Equals("") && !Session["UserClientUsername"].Equals(""))
             {
                 return RedirectToAction("Index", "Home");
             }
@@ -53,7 +53,8 @@ namespace WebPerfume.Controllers
 
         public ActionResult Logout()
         {
-            Session["UserClient"] = "";
+            Session["UserClient"] ="";
+            Session["UserClientUsername"] = "";
             return RedirectToAction("Index", "Home");
         }
 

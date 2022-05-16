@@ -33,18 +33,30 @@ namespace WebPerfume.Controllers
             obj.Content = "Thông báo khách hàng đặt hàng thành công";
             await GetTemplate(obj);
 
-            var cart = Session[CartSession];
-            var list = new List<CartItem>();
-            if (cart != null)
+
+            var listResult = new List<Cart>();
+            if ((string)Session["UserClientUsername"] != "")
             {
-                list = (List<CartItem>)cart;
-                ViewBag.SoLuong = list.Count;
+                var userCurrent = (string)Session["UserClientUsername"].ToString();
+                var getCus = new CustomerDAO().getCustomer(userCurrent);
+                var listProductInCart = db.Carts.Where(x => x.CustomerId == getCus.Id).ToList();
+                listResult = listProductInCart;
+                ViewBag.SoLuong = listProductInCart.Count;
             }
             else
             {
-                ViewBag.SoLuong = 0;
+                var getCartOfSession = Session[CartSession];
+                if (getCartOfSession != null)
+                {
+                    listResult = (List<Cart>)getCartOfSession;
+                    ViewBag.SoLuong = ((List<Cart>)getCartOfSession).Count;
+                }
+                else
+                {
+                    ViewBag.SoLuong = 0;
+                }
             }
-            return View(list);
+            return View(listResult);
         }
 
         public async Task GetTemplate(SendMailModel obj)
@@ -92,55 +104,69 @@ namespace WebPerfume.Controllers
 
         public ActionResult AddItem(int id, int quantity)
         {
-            var sp = new ProductDAO().ViewDetail(id);
-            var cart = Session[CartSession];
-            if (cart != null)
+            if ((string)Session["UserClientUsername"] != "")
             {
-                var list = (List<CartItem>)cart;
-                if (list.Exists(n => n.Product.Id == id))
+                var userCurrent = (string)Session["UserClientUsername"].ToString();
+                var getCus = db.Customers.FirstOrDefault(x => x.Username == userCurrent);
+                var getListProductInCart = db.Carts.Where(x => x.CustomerId == getCus.Id).ToList();
+                if (getListProductInCart.Count != 0 && getListProductInCart.Exists(x => x.ProductId == id && x.CustomerId == getCus.Id) == true)
                 {
-                    foreach (var item in list)
+                    var ext = getListProductInCart.Find(x => x.ProductId == id);
+                    if(ext != null)
                     {
-                        if (item.Product.Id == id)
-                        {
-                            item.quantity += quantity;
-                        }
-                    }
+                        ext.Quantity += quantity;
+                    }                   
                 }
                 else
                 {
-                    var item = new CartItem();
-                    item.Product = sp;
-                    item.quantity = quantity;
-                    if (item.Product.PromotionPrice != null)
-                    {
-                        item.Total = quantity * item.Product.PromotionPrice;
-                    }
-                    else
-                    {
-                        item.Total = quantity * item.Product.Price;
-                    }
+                    var getProduct = db.Products.FirstOrDefault(x => x.Id == id);
+                    var newItem = new Cart();
+                    newItem.ProductId = id;
+                    newItem.CustomerId = getCus.Id;
+                    newItem.Product = getProduct;
+                    newItem.Quantity = quantity;
+                    newItem.Created = DateTime.Now;
 
-                    list.Add(item);
+                    db.Carts.Add(newItem);
                 }
-                Session[CartSession] = list;
+                db.SaveChanges();
             }
             else
             {
-                var item = new CartItem();
-                item.Product = sp;
-                item.quantity = quantity;
-                if (item.Product.PromotionPrice != null)
+                var productOfCart = Session[CartSession];
+                if (productOfCart != null && ((List<Cart>)productOfCart).Exists(x => x.ProductId == id) == true)
                 {
-                    item.Total = quantity * item.Product.PromotionPrice;
+                    var listProductByCart = (List<Cart>)productOfCart;
+                    var ext = listProductByCart.Find(x => x.ProductId == id);
+                    if (ext != null)
+                    {
+                        ext.Quantity += quantity;
+                        ext.Created = DateTime.Now;
+                    }
+                    Session[CartSession] = listProductByCart;
                 }
                 else
                 {
-                    item.Total = quantity * item.Product.Price;
+                    var getProduct = db.Products.FirstOrDefault(x => x.Id == id);
+                    var newItem = new Cart();
+                    newItem.ProductId = id;
+                    newItem.Product = getProduct;
+                    newItem.Quantity = quantity;
+                    newItem.Created = DateTime.Now;
+
+                    if (productOfCart == null)
+                    {
+                        var listResult = new List<Cart>();
+                        listResult.Add(newItem);
+                        Session[CartSession] = listResult;
+                    }
+                    else
+                    {
+                        var listProduct = (List<Cart>)Session[CartSession];
+                        listProduct.Add(newItem);
+                        Session[CartSession] = listProduct;
+                    }
                 }
-                var list = new List<CartItem>();
-                list.Add(item);
-                Session[CartSession] = list;
             }
             return RedirectToAction("Index");
         }
@@ -189,14 +215,21 @@ namespace WebPerfume.Controllers
         [HttpGet]
         public ActionResult Payment()
         {
-            var cart = Session[CartSession];
-            var list = new List<CartItem>();
-            if (cart != null)
+
+            var listResult = new List<Cart>();
+            if ((string)Session["UserClientUsername"] != "")
             {
-                list = (List<CartItem>)cart;
-                //ViewBag.SoLuong = list.Count;
+                var userCurrent = (string)Session["UserClientUsername"].ToString();
+                var getCus = new CustomerDAO().getCustomer(userCurrent);
+                var listProductInCart = db.Carts.Where(x => x.CustomerId == getCus.Id).ToList();
+                listResult = listProductInCart;
             }
-            return View(list);
+            else
+            {
+                var getCartOfSession = Session[CartSession];
+                listResult = (List<Cart>)getCartOfSession;
+            }
+            return View(listResult);
         }
 
         [HttpPost]

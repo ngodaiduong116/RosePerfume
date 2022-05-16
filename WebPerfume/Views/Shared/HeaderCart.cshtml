@@ -1,9 +1,9 @@
-﻿@model List<WebPerfume.Models.CartItem>
+﻿@model List<WebPerfume.Models.EF.Cart>
 @{
     decimal? totalmoney = 0;
     foreach (var item in Model)
     {
-        totalmoney += item.Total;
+        totalmoney += ((item.Product.PercentPromotion != null && item.Product.PromotionPrice.Value != 0) ? item.Product.PromotionPrice : item.Product.Price) * item.Quantity;
     }
 }
 <div class="mini_cart_wrapper text-right">
@@ -20,14 +20,14 @@
                 <div class="cart_info">
                     <a href="/Product/Detail/@item.Product.Id">@item.Product.Name</a>
 
-                    <span class="quantity">Số lượng: @item.quantity</span>
-                    @if (item.Product.PromotionPrice != null)
+                    <span class="quantity">Số lượng: @item.Quantity</span>
+                    @if (item.Product.PromotionPrice != null && item.Product.PromotionPrice.Value != 0)
                     {
-                        <span class="price_cart">@((item.Product.PromotionPrice.GetValueOrDefault(0)*item.quantity).ToString("N0"))</span>
+                        <span class="price_cart">@((item.Product.PromotionPrice.GetValueOrDefault(0)*item.Quantity).ToString("N0"))</span>
                     }
                     else
                     {
-                        <span class="price_cart">@((item.Product.Price.GetValueOrDefault(0)*item.quantity).ToString("N0"))</span>
+                        <span class="price_cart">@((item.Product.Price.GetValueOrDefault(0)*item.Quantity).ToString("N0"))</span>
                     }
 
 

@@ -21,6 +21,7 @@ namespace WebPerfume.Models.EF
         public virtual DbSet<Product> Products { get; set; }
         public virtual DbSet<sysdiagram> sysdiagrams { get; set; }
         public virtual DbSet<Tag> Tags { get; set; }
+        public virtual DbSet<Cart> Carts { get; set; }
 
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
         {
@@ -61,6 +62,11 @@ namespace WebPerfume.Models.EF
                 .HasMany(e => e.OrderDetails)
                 .WithRequired(e => e.Product)
                 .WillCascadeOnDelete(false);
+
+            modelBuilder.Entity<Product>()
+               .HasMany(e => e.Carts)
+               .WithRequired(e => e.Product)
+               .WillCascadeOnDelete(false);
         }
     }
 }
