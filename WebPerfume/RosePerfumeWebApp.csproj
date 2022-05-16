@@ -187,6 +187,7 @@
     <Compile Include="Models\DAO\ProductDAO.cs" />
     <Compile Include="Models\DAO\TagDAO.cs" />
     <Compile Include="Models\EF\Account.cs" />
+    <Compile Include="Models\EF\Cart.cs" />
     <Compile Include="Models\EF\Category.cs" />
     <Compile Include="Models\EF\Customer.cs" />
     <Compile Include="Models\EF\News.cs" />

@@ -91,10 +91,85 @@ namespace WebPerfume.Controllers
 
         public ActionResult AddItem(int id, int quantity)
         {
+            // kiểm tra là Khách Hàng có tài khoản không hay khách hàng vãng lai
+            // Đã đăng kí tài khoản
+            if ((string)Session["UserClientUsername"] != "")
+            {
+                var getCus = db.Customers.FirstOrDefault(x => x.Username == (string)Session["UserClientUsername"]);
+                //Lấy danh sách sản phẩm có trong giỏ hàng hiện tại của khách hàng
+                var getListProductInCart = db.Carts.Where(x => x.CustomerId == getCus.Id).ToList();
+                if (getListProductInCart.Count == 0)
+                {
+                    var getProduct = new ProductDAO().ViewDetail(id);
+                    var newItem = new Cart();
+                    newItem.ProductId = id;
+                    newItem.CustomerId = getCus.Id;
+                    newItem.Product = getProduct;
+                    newItem.Quantity = quantity;
+                    newItem.Created = DateTime.Now;
+                    if(getProduct.PromotionPrice != null || getProduct.PromotionPrice == 0)
+                    {
+                        newItem.Total = quantity * getProduct.Price;
+                    }
+                    else
+                    {
+                        newItem.Total = quantity * getProduct.PromotionPrice;
+                    }
+                    db.Carts.Add(newItem);
+                    db.SaveChanges();
+                }
+                else
+                {
+                    var checkProduct = db.Carts.FirstOrDefault(x => x.ProductId.ToString().Contains(id.ToString()) && x.CustomerId == getCus.Id);
+                    if (checkProduct != null)
+                    {
+                        var getProOfCart = db.Carts.FirstOrDefault(x => x.ProductId == id && x.CustomerId == getCus.Id);
+
+                        getProOfCart.Quantity += quantity;
+                        db.SaveChanges();
+                    }
+                    else
+                    {
+                        SetAlert("Sản phẩm đã ngưng bán", "warning");
+                    }
+                }
+            }
+            // Không có tài khoản Shop
+            else
+            {
+                var productOfCart = Session[CartSession];
+                if (productOfCart != null)
+                {
+                    var listProductByCart = (List<Cart>)productOfCart;
+                    if (listProductByCart.Exists(e => e.ProductId == id))
+                    {
+                        foreach (var item in listProductByCart)
+                        {
+                            if (item.ProductId == id)
+                            {
+                                item.Quantity += quantity;
+                                item.Created = DateTime.Now;
+                            }
+                        }
+                    }
+                    else
+                    {
+                        var newItem = new Cart();
+                        newItem.ProductId = id;
+                        newItem.Product = new ProductDAO().ViewDetail(id);
+                        newItem.Quantity = quantity;
+                        newItem.Created = DateTime.Now;
+                    }
+                }
+            }
+
+
+
+
             var sp = new ProductDAO().ViewDetail(id);
             var cart = Session[CartSession];
             if (cart != null)
-            {
+            {                
                 var list = (List<CartItem>)cart;
                 if (list.Exists(n => n.Product.Id == id))
                 {

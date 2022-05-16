@@ -13,6 +13,7 @@ namespace WebPerfume.Models.EF
         public Product()
         {
             OrderDetails = new HashSet<OrderDetail>();
+            Carts = new HashSet<Cart>();
         }
 
         public int Id { get; set; }
@@ -62,5 +63,6 @@ namespace WebPerfume.Models.EF
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<OrderDetail> OrderDetails { get; set; }
+        public virtual ICollection<Cart> Carts { get; set; }
     }
 }
