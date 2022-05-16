@@ -11,6 +11,7 @@ namespace WebPerfume.Controllers
 {
     public class HomeController : Controller
     {
+        RosePerfumeDBModel db = new RosePerfumeDBModel();
         private string CartSession = "CartSession";
         public ActionResult Index()
         {            
@@ -49,18 +50,29 @@ namespace WebPerfume.Controllers
         [ChildActionOnly]
         public PartialViewResult HeaderCart()
         {
-            var cart = Session[CartSession];
-            var list = new List<CartItem>();
-            if (cart != null)
+            var listResult = new List<Cart>();
+            if ((string)Session["UserClientUsername"] != "")
             {
-                list = (List<CartItem>)cart;
-                ViewBag.SoLuong = list.Count;
+                var userCurrent = (string)Session["UserClientUsername"].ToString();
+                var getCus = new CustomerDAO().getCustomer(userCurrent);
+                var listProductInCart = db.Carts.Where(x => x.CustomerId == getCus.Id).ToList();
+                listResult = listProductInCart;
+                ViewBag.SoLuong = listProductInCart.Count;
             }
             else
             {
-                ViewBag.SoLuong = 0;
+                var getCartOfSession = Session[CartSession];
+                if (getCartOfSession != null)
+                {
+                    listResult = (List<Cart>)getCartOfSession;
+                    ViewBag.SoLuong = ((List<Cart>)getCartOfSession).Count;
+                }
+                else
+                {
+                    ViewBag.SoLuong = 0;
+                }
             }
-            return PartialView(list);
+            return PartialView(listResult);
         }
     }
 }

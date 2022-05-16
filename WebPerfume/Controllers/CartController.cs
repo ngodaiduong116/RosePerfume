@@ -26,25 +26,31 @@ namespace WebPerfume.Controllers
         // GET: Cart
         public async Task<ActionResult> Index()
         {
-            await GetTemplate( new {
-                name = "Ngo Dai Duong",
-                Age = 18
-            });
 
-            var cart = Session[CartSession];
-            var list = new List<CartItem>();
-            if (cart != null)
+            var listResult = new List<Cart>();
+            if ((string)Session["UserClientUsername"] != "")
             {
-                list = (List<CartItem>)cart;
-                ViewBag.SoLuong = list.Count;
+                var userCurrent = (string)Session["UserClientUsername"].ToString();
+                var getCus = new CustomerDAO().getCustomer(userCurrent);
+                var listProductInCart = db.Carts.Where(x => x.CustomerId == getCus.Id).ToList();
+                listResult = listProductInCart;
+                ViewBag.SoLuong = listProductInCart.Count;
             }
             else
             {
-                ViewBag.SoLuong = 0;
+                var getCartOfSession = Session[CartSession];
+                if (getCartOfSession != null)
+                {
+                    listResult = (List<Cart>)getCartOfSession;
+                    ViewBag.SoLuong = ((List<Cart>)getCartOfSession).Count;
+                }
+                else
+                {
+                    ViewBag.SoLuong = 0;
+                }
             }
-            return View(list);
+            return View(listResult);
         }
-
 
         public async Task GetTemplate(object obj)
         {
@@ -91,130 +97,69 @@ namespace WebPerfume.Controllers
 
         public ActionResult AddItem(int id, int quantity)
         {
-            // kiểm tra là Khách Hàng có tài khoản không hay khách hàng vãng lai
-            // Đã đăng kí tài khoản
             if ((string)Session["UserClientUsername"] != "")
             {
-                var getCus = db.Customers.FirstOrDefault(x => x.Username == (string)Session["UserClientUsername"]);
-                //Lấy danh sách sản phẩm có trong giỏ hàng hiện tại của khách hàng
+                var userCurrent = (string)Session["UserClientUsername"].ToString();
+                var getCus = db.Customers.FirstOrDefault(x => x.Username == userCurrent);
                 var getListProductInCart = db.Carts.Where(x => x.CustomerId == getCus.Id).ToList();
-                if (getListProductInCart.Count == 0)
+                if (getListProductInCart.Count != 0 && getListProductInCart.Exists(x => x.ProductId == id && x.CustomerId == getCus.Id) == true)
                 {
-                    var getProduct = new ProductDAO().ViewDetail(id);
+                    var ext = getListProductInCart.Find(x => x.ProductId == id);
+                    if(ext != null)
+                    {
+                        ext.Quantity += quantity;
+                    }                   
+                }
+                else
+                {
+                    var getProduct = db.Products.FirstOrDefault(x => x.Id == id);
                     var newItem = new Cart();
                     newItem.ProductId = id;
                     newItem.CustomerId = getCus.Id;
                     newItem.Product = getProduct;
                     newItem.Quantity = quantity;
                     newItem.Created = DateTime.Now;
-                    if(getProduct.PromotionPrice != null || getProduct.PromotionPrice == 0)
-                    {
-                        newItem.Total = quantity * getProduct.Price;
-                    }
-                    else
-                    {
-                        newItem.Total = quantity * getProduct.PromotionPrice;
-                    }
-                    db.Carts.Add(newItem);
-                    db.SaveChanges();
-                }
-                else
-                {
-                    var checkProduct = db.Carts.FirstOrDefault(x => x.ProductId.ToString().Contains(id.ToString()) && x.CustomerId == getCus.Id);
-                    if (checkProduct != null)
-                    {
-                        var getProOfCart = db.Carts.FirstOrDefault(x => x.ProductId == id && x.CustomerId == getCus.Id);
 
-                        getProOfCart.Quantity += quantity;
-                        db.SaveChanges();
-                    }
-                    else
-                    {
-                        SetAlert("Sản phẩm đã ngưng bán", "warning");
-                    }
+                    db.Carts.Add(newItem);
                 }
+                db.SaveChanges();
             }
-            // Không có tài khoản Shop
             else
             {
                 var productOfCart = Session[CartSession];
-                if (productOfCart != null)
+                if (productOfCart != null && ((List<Cart>)productOfCart).Exists(x => x.ProductId == id) == true)
                 {
                     var listProductByCart = (List<Cart>)productOfCart;
-                    if (listProductByCart.Exists(e => e.ProductId == id))
+                    var ext = listProductByCart.Find(x => x.ProductId == id);
+                    if (ext != null)
                     {
-                        foreach (var item in listProductByCart)
-                        {
-                            if (item.ProductId == id)
-                            {
-                                item.Quantity += quantity;
-                                item.Created = DateTime.Now;
-                            }
-                        }
+                        ext.Quantity += quantity;
+                        ext.Created = DateTime.Now;
                     }
-                    else
-                    {
-                        var newItem = new Cart();
-                        newItem.ProductId = id;
-                        newItem.Product = new ProductDAO().ViewDetail(id);
-                        newItem.Quantity = quantity;
-                        newItem.Created = DateTime.Now;
-                    }
-                }
-            }
-
-
-
-
-            var sp = new ProductDAO().ViewDetail(id);
-            var cart = Session[CartSession];
-            if (cart != null)
-            {                
-                var list = (List<CartItem>)cart;
-                if (list.Exists(n => n.Product.Id == id))
-                {
-                    foreach (var item in list)
-                    {
-                        if (item.Product.Id == id)
-                        {
-                            item.quantity += quantity;
-                        }
-                    }
+                    Session[CartSession] = listProductByCart;
                 }
                 else
                 {
-                    var item = new CartItem();
-                    item.Product = sp;
-                    item.quantity = quantity;
-                    if (item.Product.PromotionPrice != null)
+                    var getProduct = db.Products.FirstOrDefault(x => x.Id == id);
+                    var newItem = new Cart();
+                    newItem.ProductId = id;
+                    newItem.Product = getProduct;
+                    newItem.Quantity = quantity;
+                    newItem.Created = DateTime.Now;
+
+                    if (productOfCart == null)
                     {
-                        item.Total = quantity * item.Product.PromotionPrice;
+                        var listResult = new List<Cart>();
+                        listResult.Add(newItem);
+                        Session[CartSession] = listResult;
                     }
                     else
                     {
-                        item.Total = quantity * item.Product.Price;
+                        var listProduct = (List<Cart>)Session[CartSession];
+                        listProduct.Add(newItem);
+                        Session[CartSession] = listProduct;
                     }
-
-                    list.Add(item);
                 }
-                Session[CartSession] = list;
-            }
-            else
-            {
-                var item = new CartItem();
-                item.Product = sp;
-                item.quantity = quantity;
-                if (item.Product.PromotionPrice != null)
-                {
-                    item.Total = quantity * item.Product.PromotionPrice;
-                }
-                else
-                {
-                    item.Total = quantity * item.Product.Price;
-                }
-                var list = new List<CartItem>();
-                list.Add(item);
-                Session[CartSession] = list;
             }
             return RedirectToAction("Index");
         }
@@ -263,14 +208,21 @@ namespace WebPerfume.Controllers
         [HttpGet]
         public ActionResult Payment()
         {
-            var cart = Session[CartSession];
-            var list = new List<CartItem>();
-            if (cart != null)
+
+            var listResult = new List<Cart>();
+            if ((string)Session["UserClientUsername"] != "")
             {
-                list = (List<CartItem>)cart;
-                //ViewBag.SoLuong = list.Count;
+                var userCurrent = (string)Session["UserClientUsername"].ToString();
+                var getCus = new CustomerDAO().getCustomer(userCurrent);
+                var listProductInCart = db.Carts.Where(x => x.CustomerId == getCus.Id).ToList();
+                listResult = listProductInCart;
             }
-            return View(list);
+            else
+            {
+                var getCartOfSession = Session[CartSession];
+                listResult = (List<Cart>)getCartOfSession;
+            }
+            return View(listResult);
         }
 
         [HttpPost]

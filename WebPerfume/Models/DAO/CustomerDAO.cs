@@ -19,5 +19,10 @@ namespace WebPerfume.Models.DAO
             }
             return model.OrderBy(n => n.Id).ToPagedList(page, pagesize);
         }
+
+        public Customer getCustomer(string useName)
+        {
+            return db.Customers.FirstOrDefault(x => x.Username == useName);
+        }
     }
 }

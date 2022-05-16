@@ -1,4 +1,4 @@
-﻿@model List<WebPerfume.Models.CartItem>
+﻿@model List<WebPerfume.Models.EF.Cart>
 @{
     ViewBag.Title = "Index";
     Layout = "~/Views/Shared/_Layout.cshtml";
@@ -68,10 +68,10 @@
                                         }
 
                                         <td class="product_quantity">
-                                            <label>Số lượng</label> <input min="1" max="100" class="txtquantity" onchange="updateQuantity()" data-id="@item.Product.Id" value="@item.quantity" type="number">
+                                            <label>Số lượng</label> <input min="1" max="100" class="txtquantity" onchange="updateQuantity()" data-id="@item.Product.Id" value="@item.Quantity" type="number">
                                         </td>
                                         @*<td class="product_total">@((item.Product.PromotionPrice.GetValueOrDefault(0)*item.quantity).ToString("N0"))</td>*@
-                                        <td class="product_total">@((item.Total.GetValueOrDefault(0)).ToString("N0"))</td>
+                                        <td class="product_total">@(item.Total.ToString("N0"))</td>
 
                                     </tr>
                                     }
@@ -92,37 +92,6 @@
                 </div>
             </div>
         </div>
-        <!--coupon code area start-->
-        @*<div class="coupon_area right">
-                <div class="row">
-
-                    <div class="col-lg-6 col-md-6 ">
-                        <div class="coupon_code right">
-                            <h3>Cart Totals</h3>
-                            <div class="coupon_inner">
-                                <div class="cart_subtotal">
-                                    <p>Subtotal</p>
-                                    <p class="cart_amount">£215.00</p>
-                                </div>
-                                <div class="cart_subtotal ">
-                                    <p>Shipping</p>
-                                    <p class="cart_amount"><span>Flat Rate:</span> £255.00</p>
-                                </div>
-                                <a href="#">Calculate shipping</a>
-
-                                <div class="cart_subtotal">
-                                    <p>Total</p>
-                                    <p class="cart_amount">@((totalmoney.GetValueOrDefault(0)).ToString("N0"))</p>
-                                </div>
-                                <div class="checkout_btn">
-                                    <a href="#">Proceed to Checkout</a>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>*@
-        <!--coupon code area end-->
 
     </div>
 </div>

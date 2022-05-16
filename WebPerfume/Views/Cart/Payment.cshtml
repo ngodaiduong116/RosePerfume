@@ -1,11 +1,11 @@
-﻿@model List<WebPerfume.Models.CartItem>
+﻿@model List<WebPerfume.Models.EF.Cart>
 @{
     ViewBag.Title = "Payment";
     Layout = "~/Views/Shared/_Layout.cshtml";
     decimal? totalmoney = 0;
     foreach (var item in Model)
-    {
-        totalmoney += item.Total;
+    {        
+        totalmoney += ((item.Product.PercentPromotion != null && item.Product.PromotionPrice.Value != 0) ? item.Product.PromotionPrice : item.Product.Price) * item.Quantity;
     }
 }
 
@@ -31,7 +31,7 @@
 
         <div class="checkout_form">
             <div class="row">
-                @if ((string)Session["UserClient"] == "")
+                @if ((string)Session["UserClientUsername"] == "")
                 {
                     <div class="col-lg-6 col-md-6">
 
@@ -90,14 +90,14 @@
                                 @foreach (var item in Model)
                                 {
                                     <tr>
-                                        <td> @item.Product.Name <strong> ( x @item.quantity)</strong></td>
-                                        @if (item.Product.PromotionPrice != null)
+                                        <td> @item.Product.Name <strong> ( x @item.Quantity)</strong></td>
+                                        @if (item.Product.PromotionPrice != null && item.Product.PromotionPrice.Value != 0)
                                         {
-                                            <td> @((item.Product.PromotionPrice.GetValueOrDefault(0)*item.quantity).ToString("N0"))</td>
+                                            <td> @((item.Product.PromotionPrice.GetValueOrDefault(0)*item.Quantity).ToString("N0"))</td>
                                         }
                                         else
                                         {
-                                            <td> @((item.Product.Price.GetValueOrDefault(0)*item.quantity).ToString("N0"))</td>
+                                            <td> @((item.Product.Price.GetValueOrDefault(0)*item.Quantity).ToString("N0"))</td>
                                         }
 
                                     </tr>
@@ -111,7 +111,7 @@
                             </tfoot>
                         </table>
                     </div>
-                    @if ((string)Session["UserClient"] != "")
+                    @if ((string)Session["UserClientUsername"] != "")
                     {
                         <div>
                             @using (Html.BeginForm("Payment", "Cart", FormMethod.Post))
