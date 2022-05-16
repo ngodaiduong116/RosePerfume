@@ -21,15 +21,17 @@ namespace WebPerfume.Controllers
 {
     public class CartController : BaseController
     {
-        RosePerfumeDBModel db = new RosePerfumeDBModel();
+        private RosePerfumeDBModel db = new RosePerfumeDBModel();
         private string CartSession = "CartSession";
+
         // GET: Cart
         public async Task<ActionResult> Index()
         {
-            await GetTemplate( new {
-                name = "Ngo Dai Duong",
-                Age = 18
-            });
+            var obj = new SendMailModel();
+            obj.Title = "Test Mail";
+            obj.Body = "Html";
+            obj.Content = "Thông báo khách hàng đặt hàng thành công";
+            await GetTemplate(obj);
 
             var cart = Session[CartSession];
             var list = new List<CartItem>();
@@ -45,8 +47,7 @@ namespace WebPerfume.Controllers
             return View(list);
         }
 
-
-        public async Task GetTemplate(object obj)
+        public async Task GetTemplate(SendMailModel obj)
         {
             try
             {
@@ -55,7 +56,7 @@ namespace WebPerfume.Controllers
                 var httpClient = new WebClient();
                 httpClient.Encoding = Encoding.UTF8;
                 var uploadPage = httpClient.UploadData(domainName, data);
-                var str = httpClient.DownloadString(domainName);
+                //var str = httpClient.DownloadString(domainName);
                 var result = Encoding.UTF8.GetString(uploadPage);
 
                 //HttpClient client = new HttpClient();
@@ -65,11 +66,11 @@ namespace WebPerfume.Controllers
                 //var response = await client.PostAsync(domainName, content);
                 //var responseString = await response.Content.ReadAsStringAsync();
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
-
             }
         }
+
         public static string RenderPartialToString(string controlName, object viewData)
         {
             ViewPage viewPage = new ViewPage() { ViewContext = new ViewContext() };
@@ -163,7 +164,7 @@ namespace WebPerfume.Controllers
                 status = true
             });
         }
-        
+
         public JsonResult DeleteAll()
         {
             Session[CartSession] = null;
@@ -184,7 +185,7 @@ namespace WebPerfume.Controllers
                 status = true
             });
         }
-        
+
         [HttpGet]
         public ActionResult Payment()
         {
@@ -218,7 +219,7 @@ namespace WebPerfume.Controllers
                 order.ShipMobile = mobile;
                 order.ShipName = shipName;
                 order.ShipEmail = email;
-            }           
+            }
             try
             {
                 var id = new OrderDAO().Insert(order);
@@ -230,7 +231,7 @@ namespace WebPerfume.Controllers
                     var orderDetail = new OrderDetail();
                     orderDetail.ProductId = item.Product.Id;
                     orderDetail.OrderId = id;
-                    if(item.Product.PromotionPrice != null)
+                    if (item.Product.PromotionPrice != null)
                     {
                         orderDetail.Price = item.Product.PromotionPrice;
                     }
@@ -247,7 +248,7 @@ namespace WebPerfume.Controllers
                     var product = new ProductDAO();
                     product.setQuantity(orderDetail.ProductId, orderDetail.Quantity);
                 }
-                Session.Remove(CartSession); 
+                Session.Remove(CartSession);
                 SetAlert("Mua hàng thành công", "success");
 
                 MailHelper obj = new MailHelper();
@@ -272,12 +273,11 @@ namespace WebPerfume.Controllers
             using (var memoryStream = new MemoryStream())
             {
                 Request.InputStream.CopyTo(memoryStream);
-                var byee= memoryStream.ToArray();
+                var byee = memoryStream.ToArray();
                 var str = Encoding.UTF8.GetString(byee);
-                var order = JsonConvert.DeserializeObject<Order>(str);
+                var order = JsonConvert.DeserializeObject<SendMailModel>(str);
                 return PartialView(order);
             }
-            
         }
     }
 }

@@ -196,6 +196,7 @@
     <Compile Include="Models\EF\RosePerfumeDBModel.cs" />
     <Compile Include="Models\EF\sysdiagram.cs" />
     <Compile Include="Models\EF\Tag.cs" />
+    <Compile Include="Models\SendMailModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
