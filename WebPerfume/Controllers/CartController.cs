@@ -222,13 +222,34 @@ namespace WebPerfume.Controllers
         // có dùng
         public JsonResult Delete(int id)
         {
-            var sessionCart = (List<CartItem>)Session[CartSession];
-            sessionCart.RemoveAll(n => n.Product.Id == id);
-            Session[CartSession] = sessionCart;
-            return Json(new
+            try
             {
-                status = true
-            });
+                if ((string)Session["UserClientUsername"] != "")
+                {
+                    var userCurrent = (string)Session["UserClientUsername"].ToString();
+                    var getCus = db.Customers.FirstOrDefault(x => x.Username == userCurrent);
+                    var getProOfCart = db.Carts.Where(x => x.CustomerId == getCus.Id && x.ProductId == id).ToList();
+                    db.Carts.RemoveRange(getProOfCart);
+                }
+                else
+                {
+                    var sessionCart = (List<Cart>)Session[CartSession];
+                    sessionCart.RemoveAll(n => n.ProductId == id);
+                    Session[CartSession] = sessionCart;
+                }
+                return Json(new
+                {
+                    status = false
+                });
+            }
+            catch(Exception ex)
+            {
+                return Json(new
+                {
+                    status = false,
+                    message = ex.ToString()
+                });
+            }
         }
 
         [HttpGet]

@@ -6,7 +6,9 @@
 
 @section jsFooter{
     <script src="~/Content/EventJs/cartController.js"></script>
+    <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
 }
+
 <!--breadcrumbs area start-->
 <div class="breadcrumbs_area">
     <div class="container">
@@ -49,7 +51,7 @@
                                     {
                                         <tr>
                                             <td class="product_remove">
-                                                <a href="#" data-id="@item.Product.Id" class="btn-delete"><i class="far fa-trash-alt"></i></a>
+                                                <a href="#" data-id="@item.Product.Id" onclick="handleRemoveProduct(@item.ProductId)" class="btn-delete"><i class="far fa-trash-alt"></i></a>
                                             </td>
                                             <td class="product_thumb">
                                                 <a href="#">
@@ -69,17 +71,6 @@
                                             <td class="product_quantity">
                                                 <label>Số lượng</label> <input min="1" max="100" onchange="updateQuantity(this.value, @item.Product.Id)" id="Id-@item.Product.Id" class="txtquantity" data-id="@item.Product.Id" value="@item.Quantity" type="number">
                                             </td>
-                                            @*<td class="product_total">@((item.Product.PromotionPrice.GetValueOrDefault(0)*item.quantity).ToString("N0"))</td>*@
-                                            <td class="product_total"></td>
-                                            <td class="product_total"></td>
-                                            <td class="product_total"></td>
-                                            <td class="product_total"></td>
-                                            <td class="product_total"></td>
-                                            <td class="product_total"></td>
-                                            <td class="product_total"></td>
-                                            <td class="product_total"></td>
-                                            <td class="product_total"></td>
-                                            <td class="product_total"></td>
                                             <td class="product_total">@(item.Total.ToString("N0"))</td>
                                         </tr>
                                     }
@@ -105,15 +96,20 @@
 
 <script>
 
-    function updateQuantity(value, id) {
+    $(document).ready(function () {
+        $("#Button").click(function () {
+            jAlert('Wow !My alert message with custom titile', 'My custom title bar here...');
+            return false;
+        });
+    });
 
+    function updateQuantity(value, id) {
         var obj = {
             Quantity: value,
             Product: {
                 Id: id
             }
         }
-
         $.ajax({
             url: '/Cart/Update',
             data: { cartModel: JSON.stringify(obj) },
@@ -131,4 +127,22 @@
             }
         })
     };
+
+    function handleRemoveProduct(idProduct) {
+        swal("dd","Title");
+        //$.ajax({
+        //    data: { id: idProduct },
+        //    url: '/Cart/Delete',
+        //    dataType: 'json',
+        //    type: 'POST',
+        //    success: function (res) {
+        //        if (res.status == true) {
+        //            window.location.href = "/Cart";
+        //        } else {
+        //            window.alert("title1", "title2");
+        //        }
+        //    }
+        //})
+    }
+
 </script>
