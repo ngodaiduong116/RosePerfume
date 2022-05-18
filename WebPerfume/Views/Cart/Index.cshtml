@@ -68,7 +68,7 @@
                                             }
 
                                             <td class="product_quantity">
-                                                <label>Số lượng</label> <input min="1" max="100" onchange="updateQuantity(this.value, @item.Product.Id)" id="Id-@item.Product.Id" class="txtquantity" data-id="@item.Product.Id" value="@item.Quantity" type="number">
+                                                <label>Số lượng</label> <input min="1" onchange="updateQuantity(this.value, @item.Product.Id)" id="Id-@item.Product.Id" class="txtquantity" data-id="@item.Product.Id" value="@item.Quantity" type="number">
                                             </td>
                                             <td class="product_total">@(item.Total.ToString("N0"))</td>
                                         </tr>
@@ -115,12 +115,16 @@
                 if (res.status == true) {
                     window.location.href = "/Cart";
                 } else {
-                    swal("Error, You can not update quantity product", {
-                        icon: "warning",
-                    }).then(() => {
-                        var idRow = `#Id-${id}`;
-                        $(idRow).val(res.quantity);
-                    })                    
+                    if (res.quantity == 1) {
+                        window.location.href = "/Cart";
+                    } else {
+                        swal("Error, You can not update quantity product", {
+                            icon: "warning",
+                        }).then(() => {
+                            var idRow = `#Id-${id}`;
+                            $(idRow).val(res.quantity);
+                        })
+                    }
                 }
 
             }
@@ -149,18 +153,17 @@
                                 icon: "success",
                             }).then(() => {
                                 window.location.href = "/Cart";
-                            });                           
+                            });
                         } else {
                             swal("Error, You can not remove product from the cart", {
                                 icon: "warning",
                             })
                         }
                     }
-                })                
+                })
             } else {
-                
-            }
-        });        
-    }
 
+            }
+        });
+    }
 </script>

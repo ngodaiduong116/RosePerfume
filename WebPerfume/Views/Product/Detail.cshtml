@@ -80,7 +80,7 @@
                     {
                         <h4>Có sẵn @Model.Quantity sản phẩm</h4>
                         <div class="product_variant quantity">
-                            @using (Html.BeginForm("AddItem", "Cart", FormMethod.Get))
+                            @using (Html.BeginForm("AddItemFromDetailProduct", "Cart", FormMethod.Get))
                             {
                                 <label>quantity</label>
                                 <input name="id" value="@Model.Id" type="hidden" />
@@ -384,30 +384,28 @@
         console.log(totalQuantity);
         console.log(valueChange);
         console.log(valuePre);
+
         if (parseInt(valuePre) > 0) {
             if (parseInt(totalQuantity) == parseInt(valuePre)) {
-                if (parseInt(valueChange) > parseInt(valuePre)) {
-                    swal("Rose Perume Notification", "The product already exists in the cart and has a maximum quantity")
-                        .then(() => {
-                        $("#quantityprod").val(totalQuantity);
-                    });
-                }                
+                swal("Rose Perume Notification", "The product already exists in the cart and has a maximum quantity")
+                    .then(() => {
+                    $("#quantityprod").val(1);
+                });                
             } else {
                 if (parseInt(totalQuantity) < parseInt(valueChange)) {
                     swal("Rose Perume Notification", "The quantity you selected has reached the maximum for this product")
                         .then(() => {
-                        $("#quantityprod").val(totalQuantity);
-                    });
+                            $("#quantityprod").val(totalQuantity);
+                        });
                 }
             }
         } else {
             if (parseInt(totalQuantity) < parseInt(valueChange)) {
                 swal("Rose Perume Notification", "The quantity you selected has reached the maximum for this product")
-                .then(() => {
-                    $("#quantityprod").val(totalQuantity);
-                });
+                    .then(() => {
+                        $("#quantityprod").val(totalQuantity);
+                    });
             }
         }
     }
-
 </script>

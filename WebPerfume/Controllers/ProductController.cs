@@ -12,12 +12,12 @@ namespace WebPerfume.Controllers
     {
         private RosePerfumeDBModel db = new RosePerfumeDBModel();
         private string CartSession = "CartSession";
+
         // GET: Product
         public ActionResult Index()
         {
             return View();
         }
-
 
         public ActionResult Detail(int id)
         {
@@ -27,7 +27,7 @@ namespace WebPerfume.Controllers
                 var userCurrent = (string)Session["UserClientUsername"].ToString();
                 var getCus = db.Customers.FirstOrDefault(x => x.Username == userCurrent);
                 var getProductInCart = db.Carts.FirstOrDefault(x => x.CustomerId == getCus.Id && x.ProductId == id);
-                if(getProductInCart != null)
+                if (getProductInCart != null)
                 {
                     QuantityProductInCart = getProductInCart.Quantity;
                 }
@@ -35,7 +35,8 @@ namespace WebPerfume.Controllers
             else
             {
                 var listProductOfCart = (List<Cart>)Session[CartSession];
-                if(listProductOfCart.Exists(x => x.ProductId == id))
+                bool check = listProductOfCart.Exists(x => x.ProductId == id);
+                if (listProductOfCart.Exists(x => x.ProductId == id))
                 {
                     QuantityProductInCart = listProductOfCart.Find(x => x.ProductId == id).Quantity;
                 }
@@ -64,6 +65,5 @@ namespace WebPerfume.Controllers
             ViewBag.Keyword = keyword;
             return View(model);
         }
-        
     }
 }
