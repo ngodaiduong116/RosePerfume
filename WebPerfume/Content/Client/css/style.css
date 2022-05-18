@@ -1235,19 +1235,21 @@ input:-ms-input-placeholder, textarea:-ms-input-placeholder {
 }
 
 .mini_cart {
-  position: absolute;
-  min-width: 355px;
-  padding: 18px 22px 33px;
-  background: #fff;
-  box-shadow: 0 0 7px 0 rgba(0, 0, 0, 0.15);
-  border: 1px solid #ededed;
-  z-index: 999;
-  right: 0;
-  top: 150%;
-  opacity: 0;
-  visibility: hidden;
-  -webkit-transition: 0.3s;
-  transition: 0.3s;
+    max-height: 850px;
+    overflow: scroll;
+    position: absolute;
+    min-width: 355px;
+    padding: 18px 22px 33px;
+    background: #fff;
+    box-shadow: 0 0 7px 0 rgba(0, 0, 0, 0.15);
+    border: 1px solid #ededed;
+    z-index: 999;
+    right: 0;
+    top: 150%;
+    opacity: 0;
+    visibility: hidden;
+    -webkit-transition: 0.3s;
+    transition: 0.3s;
 }
 @media only screen and (min-width: 768px) and (max-width: 991px) {
   .mini_cart {

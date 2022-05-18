@@ -5,7 +5,6 @@
 }
 
 @section jsFooter{
-    <script src="~/Content/EventJs/cartController.js"></script>
     <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
 }
 
@@ -84,7 +83,7 @@
                     </div>
                     <div class="row" style="float:right;">
                         <div class="cart_submit">
-                            <button id="btnPayment" type="submit">Mua ngay</button>
+                            <button id="btnPayment" onclick="handlePayment()" type="submit">Mua ngay</button>
                         </div>
                     </div>
                 </div>
@@ -96,12 +95,9 @@
 
 <script>
 
-    $(document).ready(function () {
-        $("#Button").click(function () {
-            jAlert('Wow !My alert message with custom titile', 'My custom title bar here...');
-            return false;
-        });
-    });
+    function handlePayment() {
+        window.location.href = "/thanh-toan";
+    }
 
     function updateQuantity(value, id) {
         var obj = {
@@ -119,9 +115,12 @@
                 if (res.status == true) {
                     window.location.href = "/Cart";
                 } else {
-                    alert("Lỗi không thể update");
-                    var idRow = `#Id-${id}`;
-                    $(idRow).val(res.quantity);
+                    swal("Error, You can not update quantity product", {
+                        icon: "warning",
+                    }).then(() => {
+                        var idRow = `#Id-${id}`;
+                        $(idRow).val(res.quantity);
+                    })                    
                 }
 
             }
@@ -129,20 +128,39 @@
     };
 
     function handleRemoveProduct(idProduct) {
-        swal("dd","Title");
-        //$.ajax({
-        //    data: { id: idProduct },
-        //    url: '/Cart/Delete',
-        //    dataType: 'json',
-        //    type: 'POST',
-        //    success: function (res) {
-        //        if (res.status == true) {
-        //            window.location.href = "/Cart";
-        //        } else {
-        //            window.alert("title1", "title2");
-        //        }
-        //    }
-        //})
+        swal({
+            title: "Are you sure?",
+            text: "Are you sure remove this product !",
+            icon: "warning",
+            buttons: true,
+            dangerMode: true,
+        }).then((willDelete) => {
+            console.log(willDelete);
+            if (willDelete) {
+
+                $.ajax({
+                    data: { id: idProduct },
+                    url: '/Cart/Delete',
+                    dataType: 'json',
+                    type: 'POST',
+                    success: function (res) {
+                        if (res.status == true) {
+                            swal("Your product has been deleted!", {
+                                icon: "success",
+                            }).then(() => {
+                                window.location.href = "/Cart";
+                            });                           
+                        } else {
+                            swal("Error, You can not remove product from the cart", {
+                                icon: "warning",
+                            })
+                        }
+                    }
+                })                
+            } else {
+                
+            }
+        });        
     }
 
 </script>

@@ -1,14 +1,8 @@
-﻿const { Alert } = require("../Admin/vendor/bootstrap/js/bootstrap.bundle");
-
-var cart = {
+﻿var cart = {
     init: function () {
         cart.registerEvent();
     },
-    registerEvent: function () {
-
-        $('#btnPayment').off('click').on('click', function () {
-            window.location.href = "/thanh-toan";
-        });        
+    registerEvent: function () {                
 
         $('#btnDeleteAll').off('click').on('click', function () {
             $.ajax({
@@ -23,24 +17,6 @@ var cart = {
                 }
             })
         });
-
-        //$('.btn-delete').off('click').on('click', function (e) {
-        //    e.preventDefault();
-        //    console.log($(this).data('id'));
-        //    $.ajax({
-        //        data: { id: $(this).data('id') },
-        //        url: '/Cart/Delete',
-        //        dataType: 'json',
-        //        type: 'POST',
-        //        success: function (res) {
-        //            if (res.status == true) {
-        //                window.location.href = "/Cart";
-        //            } else {
-        //                Alert("title1","title2");
-        //            }
-        //        }
-        //    })
-        //});
     }
 }
 cart.init();

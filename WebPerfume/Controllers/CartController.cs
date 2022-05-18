@@ -230,6 +230,7 @@ namespace WebPerfume.Controllers
                     var getCus = db.Customers.FirstOrDefault(x => x.Username == userCurrent);
                     var getProOfCart = db.Carts.Where(x => x.CustomerId == getCus.Id && x.ProductId == id).ToList();
                     db.Carts.RemoveRange(getProOfCart);
+                    db.SaveChanges();
                 }
                 else
                 {
@@ -239,15 +240,14 @@ namespace WebPerfume.Controllers
                 }
                 return Json(new
                 {
-                    status = false
+                    status = true
                 });
             }
             catch(Exception ex)
             {
                 return Json(new
                 {
-                    status = false,
-                    message = ex.ToString()
+                    status = false
                 });
             }
         }
@@ -355,5 +355,19 @@ namespace WebPerfume.Controllers
                 return PartialView(order);
             }
         }
+
+        //public bool checkQuantityBeforeAddItem(int idProduct, int quantityAdd, int idCustomer = 0)
+        //{
+        //    bool flag = true;
+        //    var getQuantityProduct = db.Products.FirstOrDefault(x => x.Id == idProduct).Quantity;
+        //    if (idCustomer != 0)
+        //    {
+        //        var getQuantityProductInCart = db.Carts.FirstOrDefault(x => x.CustomerId == idCustomer && x.ProductId == idProduct);
+        //        if (getQuantityProductInCart != null)
+        //        {
+
+        //        }
+        //    }
+        //}
     }
 }

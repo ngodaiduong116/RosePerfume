@@ -2,9 +2,12 @@
 @{
     ViewBag.Title = "Detail";
     Layout = "~/Views/Shared/_Layout.cshtml";
-    var quantityprod = 1;
+    var quantityprod = ViewBag.QuantityProductInCart;
     var listRelated = (List<WebPerfume.Models.EF.Product>)ViewBag.ListRelated;
     var listHot = (List<WebPerfume.Models.EF.Product>)ViewBag.ListHot;
+}
+@section jsFooter{
+    <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
 }
 
 <!--breadcrumbs area start-->
@@ -81,7 +84,7 @@
                             {
                                 <label>quantity</label>
                                 <input name="id" value="@Model.Id" type="hidden" />
-                                <input min="1" max="@Model.Quantity" name="quantity" type="number" id="quantityprod" value="1">
+                                <input min="1" max="@Model.Quantity" name="quantity" onchange="handleChangeQuantry(@Model.Quantity, this.value , @quantityprod)" type="number" id="quantityprod" value="1">
 
                                 <button class="button" type="submit">Mua hàng</button>
                             }
@@ -374,3 +377,37 @@
     </div>
 </section>
 <!--product area end-->
+
+<script type="text/javascript">
+
+    function handleChangeQuantry(totalQuantity, valueChange, valuePre) {
+        console.log(totalQuantity);
+        console.log(valueChange);
+        console.log(valuePre);
+        if (parseInt(valuePre) > 0) {
+            if (parseInt(totalQuantity) == parseInt(valuePre)) {
+                if (parseInt(valueChange) > parseInt(valuePre)) {
+                    swal("Rose Perume Notification", "The product already exists in the cart and has a maximum quantity")
+                        .then(() => {
+                        $("#quantityprod").val(totalQuantity);
+                    });
+                }                
+            } else {
+                if (parseInt(totalQuantity) < parseInt(valueChange)) {
+                    swal("Rose Perume Notification", "The quantity you selected has reached the maximum for this product")
+                        .then(() => {
+                        $("#quantityprod").val(totalQuantity);
+                    });
+                }
+            }
+        } else {
+            if (parseInt(totalQuantity) < parseInt(valueChange)) {
+                swal("Rose Perume Notification", "The quantity you selected has reached the maximum for this product")
+                .then(() => {
+                    $("#quantityprod").val(totalQuantity);
+                });
+            }
+        }
+    }
+
+</script>

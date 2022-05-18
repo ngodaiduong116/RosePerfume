@@ -8,12 +8,12 @@
 }
 <div class="mini_cart_wrapper text-right">
     <a href="javascript:void(0)"><span class="fas fa-shopping-cart"></span>@*$67.71*@ </a>
-    <span class="cart_quantity">@Model.Count</span>
+    <span id="quantityProductInCart" class="cart_quantity">@Model.Count</span>
     <!--mini cart-->
     <div class="mini_cart">
         @foreach (var item in Model)
         {
-            <div class="cart_item">
+            <div class="cart_item" id="cartProduct-@item.Id">
                 <div class="cart_img">
                     <a href="/Product/Detail/@item.Product.Id"><img src="@item.Product.Image" alt=""></a>
                 </div>
@@ -32,9 +32,9 @@
 
 
                 </div>
-                @*<div class="cart_remove">
-                    <a href="#" data-id="@item.Product.Id" class="btn-delete"><i class="fas fa-times"></i></a>
-                </div>*@
+                <div class="cart_remove">
+                    <a href="#" data-id="@item.Product.Id" onclick="handleRemoveProductOnHeader(@item.ProductId, @item.Id)" class="btn-delete"><i class="fas fa-times"></i></a>
+                </div>
             </div>
         }
 
@@ -42,7 +42,7 @@
         <div class="mini_cart_table">
             <div class="cart_total mt-10">
                 <span>Tổng số tiền:</span>
-                <span class="price">@((totalmoney.GetValueOrDefault(0)).ToString("N0"))</span>
+                <span id="totalCard" class="price">@((totalmoney.GetValueOrDefault(0)).ToString("N0"))&nbsp;₫</span>
             </div>
         </div>
 
@@ -60,27 +60,41 @@
     <!--mini cart end-->
 </div>
 <script>
-    var cart = {
-        init: function () {
-            cart.registerEvent();
-        },
-        registerEvent: function () {
-            $('.btn-delete').off('click').on('click', function (e) {
-                e.preventDefault();
-                $.ajax({
-                    data: { id: $(this).data('id') },
-                    url: '/Cart/Delete',
-                    dataType: 'json',
-                    type: 'POST',
-                    success: function (res) {
-                        if (res.status == true) {
-                            window.location.href = "/Cart";
-                        }
 
-                    }
-                })
-            });
-        }
+    function formatToCurrency(amount) {
+        return (amount).toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,');
     }
-    cart.init();
+
+    function handleRemoveProductOnHeader(idProduct, idCart) {
+        $.ajax({
+            data: { id: idProduct },
+            url: '/Cart/Delete',
+            dataType: 'json',
+            type: 'POST',
+            success: function (res) {
+                if (res.status == true) {                    
+                    var getElement = `#cartProduct-${idCart}`;
+                    $(getElement).remove();
+                    var getQuatityShow = $("#quantityProductInCart").html();
+                    $("#quantityProductInCart").html(getQuatityShow - 1);
+                    var listsp = $('.price_cart');
+                    var newTotal = 0;
+                    $.each(listsp, function (index, item) {
+                        var convertPrice = $(item).text().replaceAll(",","");
+                        newTotal += parseInt(convertPrice)                        
+                    });                  
+                    newTotal = newTotal.toLocaleString('vi', { style: 'currency', currency: 'VND' });
+                    $("#totalCard").html(newTotal);
+                    if (window.location.href == "https://localhost:44329/Cart#") {
+                        window.location.href = "/Cart";
+                    }
+                } else {
+                    swal("Error, You can not remove product from the cart", {
+                        icon: "warning",
+                    })
+                }
+            }
+        })
+    }
+
 </script>
