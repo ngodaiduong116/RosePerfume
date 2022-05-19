@@ -68,7 +68,7 @@
                                             }
 
                                             <td class="product_quantity">
-                                                <label>Số lượng</label> <input min="1" onchange="updateQuantity(this.value, @item.Product.Id)" id="Id-@item.Product.Id" class="txtquantity" data-id="@item.Product.Id" value="@item.Quantity" type="number">
+                                                <label>Số lượng</label> <input min="1" max="@item.Product.Quantity" onchange="updateQuantity(this.value, @item.Product.Id)" id="Id-@item.Product.Id" class="txtquantity" data-id="@item.Product.Id" value="@item.Quantity" type="number">
                                             </td>
                                             <td class="product_total">@(item.Total.ToString("N0"))</td>
                                         </tr>
@@ -111,22 +111,21 @@
             data: { cartModel: JSON.stringify(obj) },
             dataType: 'json',
             type: 'POST',
-            success: function (res) {
-                if (res.status == true) {
-                    window.location.href = "/Cart";
-                } else {
-                    if (res.quantity == 1) {
+            success: function (response) {
+                if (response.status && response.quantityBefore != 1) {
+                    swal("Error, You can not update quantity product", {
+                        icon: "warning",
+                    }).then(() => {
+                        var idRow = `#Id-${id}`;
+                        $(idRow).val(response.quantityBefore);
                         window.location.href = "/Cart";
-                    } else {
-                        swal("Error, You can not update quantity product", {
-                            icon: "warning",
-                        }).then(() => {
-                            var idRow = `#Id-${id}`;
-                            $(idRow).val(res.quantity);
-                        })
-                    }
+                    })
+                } else {
+                    window.location.href = "/Cart";
                 }
-
+            },
+            error: function () {
+                window.location.href = "/Cart";
             }
         })
     };

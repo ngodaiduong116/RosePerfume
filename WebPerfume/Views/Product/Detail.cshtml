@@ -283,7 +283,7 @@
                                     </ul>
                                 </div>
                                 <div class="add_to_cart">
-                                    <a href="/Cart/AddItem?id=@item.Id&quantity=1" title="add to cart">Mua ngay</a>
+                                    <a onclick="AddItem(@item.Id)" title="add to cart">Mua ngay</a>
                                 </div>
                             </div>
                             <div class="product_content">
@@ -349,7 +349,7 @@
                                     </ul>
                                 </div>
                                 <div class="add_to_cart">
-                                    <a href="/Cart/AddItem?id=@item.Id&quantity=1" title="add to cart">Mua ngay</a>
+                                    <a onclick="AddItem(@item.Id)" title="add to cart">Mua ngay</a>
                                 </div>
                             </div>
                             <div class="product_content">
@@ -392,20 +392,34 @@
                     $("#quantityprod").val(1);
                 });                
             } else {
+                if (parseInt(valueChange) <= 0) {
+                    swal("Rose Perume Notification", "The quantity can not select less than or equals 0")
+                        .then(() => {
+                            $("#quantityprod").val(1);
+                        });
+                } else {
+                    if (parseInt(totalQuantity) < parseInt(valueChange)) {
+                        swal("Rose Perume Notification", "The quantity you selected has reached the maximum for this product")
+                            .then(() => {
+                                $("#quantityprod").val(totalQuantity);
+                            });
+                    }
+                }                
+            }
+        } else {
+            if (parseInt(valueChange) <= 0) {
+                swal("Rose Perume Notification", "The quantity can not select less than or equals 0")
+                    .then(() => {
+                        $("#quantityprod").val(1);
+                    });
+            } else {
                 if (parseInt(totalQuantity) < parseInt(valueChange)) {
                     swal("Rose Perume Notification", "The quantity you selected has reached the maximum for this product")
                         .then(() => {
                             $("#quantityprod").val(totalQuantity);
                         });
                 }
-            }
-        } else {
-            if (parseInt(totalQuantity) < parseInt(valueChange)) {
-                swal("Rose Perume Notification", "The quantity you selected has reached the maximum for this product")
-                    .then(() => {
-                        $("#quantityprod").val(totalQuantity);
-                    });
-            }
+            }            
         }
     }
 </script>

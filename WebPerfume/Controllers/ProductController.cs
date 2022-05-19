@@ -34,12 +34,15 @@ namespace WebPerfume.Controllers
             }
             else
             {
-                var listProductOfCart = (List<Cart>)Session[CartSession];
-                bool check = listProductOfCart.Exists(x => x.ProductId == id);
-                if (listProductOfCart.Exists(x => x.ProductId == id))
+                var productOfCart = Session[CartSession];
+                if(productOfCart != null)
                 {
-                    QuantityProductInCart = listProductOfCart.Find(x => x.ProductId == id).Quantity;
-                }
+                    var listProductOfCart = (List<Cart>)productOfCart;
+                    if (listProductOfCart.FirstOrDefault(x => x.ProductId == id) != null)
+                    {
+                        QuantityProductInCart = listProductOfCart.Find(x => x.ProductId == id).Quantity;
+                    }
+                }                
             }
 
             var model = new ProductDAO().ViewDetail(id);

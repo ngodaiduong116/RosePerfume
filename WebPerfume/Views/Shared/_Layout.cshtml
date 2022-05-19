@@ -153,10 +153,39 @@
     <script src="~/Content/Client/js/main.js"></script>
     <script src="~/Content/EventJs/jquery-ui.js"></script>
     <script src="~/Content/EventJs/search.js"></script>
+    <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
     @RenderSection("jsFooter", required: false)
     <script>
         $("#alertBox").removeClass('hide');
         $("#alertBox").delay(2000).animate({ opacity: 0 }, "slow");
+    </script>
+    <script type="text/javascript">
+
+        function AddItem(Id) {
+            $.ajax({
+                url: '/Cart/AddItem',
+                data: {
+                    id: Id,
+                    quantity: 1,
+                },
+                dataType: 'json',
+                type: 'POST',
+                success: function (response) {
+                    if (response == true) {
+                        console.log("You will now be redirected.");
+                        window.location = "/my-cart";
+                    } else {
+                        swal("Notification!", "This product is out stock");
+                    }
+                },
+                error: function (e) {
+                    if (e?.status == 400) {
+                        swal("Notification!", "This product is out stock");
+                    }
+                }
+            })
+        }
+
     </script>
 </body>
 </html>
