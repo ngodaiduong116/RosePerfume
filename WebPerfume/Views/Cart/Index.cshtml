@@ -96,7 +96,20 @@
 <script>
 
     function handlePayment() {
-        window.location.href = "/thanh-toan";
+        $.ajax({
+            url: 'Cart/CheckCart',
+            dataType: 'json',
+            type: 'POST',
+            success: function (response) {
+                if (response) {
+                    window.location.href = "/thanh-toan";
+                } else {
+                    swal("Error, My Cart is empty !", {
+                        icon: "warning",
+                    })
+                }
+            }
+        })         
     }
 
     function updateQuantity(value, id) {

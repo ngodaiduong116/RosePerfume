@@ -49,10 +49,21 @@ namespace WebPerfume.Controllers
                             listItemReMove.Add(item);
                         }
                         else
-                        {
-                            listResult.Add(item);
+                        {                            
+                            if(item.Quantity > item.Product.Quantity)
+                            {
+                                var getObj = db.Carts.FirstOrDefault(x => x.Id == item.Id);
+                                getObj.Quantity = (int)item.Product.Quantity;
+                                listResult.Add(getObj);
+                                db.SaveChanges();
+                            }
+                            else
+                            {
+                                listResult.Add(item);
+                            }                           
                         }
                     });
+
                     if(listItemReMove.Count != 0)
                     {
                         db.Carts.RemoveRange(listItemReMove);
@@ -71,20 +82,32 @@ namespace WebPerfume.Controllers
                 if (getCartOfSession != null)
                 {
                     var listProductInCart = (List<Cart>)getCartOfSession;
-                    //listResult = listProductInCart;
-                    var listItemReMove = new List<Cart>();
+                    //var listItemReMove = new List<Cart>();
                     listProductInCart.ForEach(item =>
                     {
                         if (item.Product.Quantity == 0)
                         {
-                            listItemReMove.Add(item);
+                            listProductInCart.Remove(item);
                         }
                         else
                         {
-                            listResult.Add(item);
+                            if(item.Product.Quantity < item.Quantity)
+                            {
+                                item.Quantity = (int)item.Product.Quantity;
+                            }                            
                         }
                     });
-                    ViewBag.SoLuong = listResult.Count;
+
+                    if(listProductInCart.Count == 0)
+                    {
+                        ViewBag.SoLuong = 0;
+                    }
+                    else
+                    {
+                        listResult = listProductInCart;
+                        Session[CartSession] = listProductInCart;
+                        ViewBag.SoLuong = listProductInCart.Count;
+                    }                    
                 }
                 else
                 {
@@ -532,6 +555,36 @@ namespace WebPerfume.Controllers
                 });
             }
         }
+        [HttpPost]
+        public ActionResult UpdateCart(string user)
+        {
+            return Json(true);
+        }
+
+        [HttpPost]
+        public ActionResult CheckCart()
+        {
+            bool isHaveProduct = true;
+            if ((string)Session["UserClientUsername"] != "")
+            {
+                var userCurrent = (string)Session["UserClientUsername"].ToString();
+                var getCus = new CustomerDAO().getCustomer(userCurrent);
+                var listProductInCart = db.Carts.Where(x => x.CustomerId == getCus.Id).ToList();
+                if(listProductInCart.Count == 0)
+                {
+                    isHaveProduct = false;
+                }
+            }
+            else
+            {
+                var getCartOfSession = Session[CartSession];
+                if (getCartOfSession == null || ((List<Cart>)getCartOfSession).Count == 0)
+                {
+                    isHaveProduct = false;
+                }
+            }
+            return Json(isHaveProduct);
+        }
 
         [HttpGet]
         public ActionResult Payment()
@@ -547,7 +600,10 @@ namespace WebPerfume.Controllers
             else
             {
                 var getCartOfSession = Session[CartSession];
-                listResult = (List<Cart>)getCartOfSession;
+                if(getCartOfSession != null)
+                {
+                    listResult = (List<Cart>)getCartOfSession;
+                }                
             }
             return View(listResult);
         }

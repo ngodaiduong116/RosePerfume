@@ -68,7 +68,8 @@
                                 </div>
                                 <div class="order_button mt-4 ml-3">
                                     <button type="submit">Thanh toán</button>
-                                </div>
+                                    <button onclick="UpdateCart(null)" type="button">Cập nhật</button>
+                                </div>                                
                             }
 
                         </div>
@@ -113,12 +114,14 @@
                     </div>
                     @if ((string)Session["UserClientUsername"] != "")
                     {
+                        var userCurrent = (string)Session["UserClientUsername"];
                         <div>
                             @using (Html.BeginForm("Payment", "Cart", FormMethod.Post))
                             {
-                                <div class="order_button mt-4 ml-3">
-                                    <button type="submit">Thanh toán</button>
-                                </div>
+                            <div class="order_button mt-4 ml-3">
+                                <button type="submit">Thanh toán</button>
+                                <button onclick="UpdateCart(@userCurrent)" type="button">Cập nhật</button>
+                            </div>
                             }
                         </div>
                     }
@@ -128,3 +131,26 @@
     </div>
 </div>
 <!--Checkout page section end-->
+
+<script>
+
+    function UpdateCart(value) {
+        $.ajax({
+            url: 'Cart/UpdateCart',
+            data: { user: value},
+            dataType: 'json',
+            type: 'POST',
+            success: function (response) {
+                if (response) {
+                    window.location.href = "/thanh-toan";
+                } else {
+                    swal("Error, My Cart is empty !", {
+                        icon: "warning",
+                    })
+                    window.location.href = "/my-cart";
+                }
+            }
+        })
+    }
+
+</script>

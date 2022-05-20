@@ -51,7 +51,7 @@
                 <a href="/Cart">Giỏ hàng</a>
             </div>
             <div class="cart_button">
-                <a href="/Cart/Payment">Thanh toán</a>
+                <a onclick="onclickPayment()" >Thanh toán</a>
             </div>
 
         </div>
@@ -59,7 +59,26 @@
     </div>
     <!--mini cart end-->
 </div>
+
+
 <script>
+
+    function onclickPayment() {
+        $.ajax({
+            url: 'Cart/CheckCart',
+            dataType: 'json',
+            type: 'POST',
+            success: function (response) {
+                if (response) {
+                    window.location.href = "/thanh-toan";
+                } else {
+                    swal("Error, My Cart is empty !", {
+                        icon: "warning",
+                    })
+                }                
+            }
+        })
+    }
 
     function formatToCurrency(amount) {
         return (amount).toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,');
@@ -85,8 +104,9 @@
                     });                  
                     newTotal = newTotal.toLocaleString('vi', { style: 'currency', currency: 'VND' });
                     $("#totalCard").html(newTotal);
-                    if (window.location.href == "https://localhost:44329/Cart#") {
-                        window.location.href = "/Cart";
+                    console.log(window.location.href);
+                    if (window.location.href == "https://localhost:44329/my-cart#") {
+                        window.location.href = "/my-cart";
                     }
                 } else {
                     swal("Error, You can not remove product from the cart", {
