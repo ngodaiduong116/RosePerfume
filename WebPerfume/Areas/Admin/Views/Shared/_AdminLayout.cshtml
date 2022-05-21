@@ -195,9 +195,9 @@
                 <!-- End of Topbar -->
                 @if (TempData["AlertMessage"] != null)
                 {
-    <div id="alertBox" style="position: fixed; right: 0px;" class="container float-right text-center col-md-3 alert @TempData["AlertType"] hide">
-        @TempData["AlertMessage"]
-    </div>}
+                    <div id="alertBox" style="position: fixed; right: 0px;" class="container float-right text-center col-md-3 alert @TempData["AlertType"] hide">
+                        @TempData["AlertMessage"]
+                    </div>}
                 <!-- Begin Page Content -->
                 <div class="container-fluid">
 
@@ -258,6 +258,8 @@
     <script src="~/Content/Admin/vendor/chart.js/Chart.min.js"></script>
 
     <!-- Page level custom scripts -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script>
+        <script type="text/javascript" src="https://cdn.datatables.net/1.10.16/js/jquery.dataTables.min.js"></script>
     <script src="~/Content/Admin/js/demo/chart-area-demo.js"></script>
     <script src="~/Content/Admin/js/demo/chart-pie-demo.js"></script>
     <script src="~/Content/EventJs/modal-dialog.js"></script>
@@ -267,6 +269,9 @@
         $("#alertBox").removeClass('hide');
         /*$("#alertBox").delay(2000).slideUp(500);*/
         $("#alertBox").delay(2000).animate({ opacity: 0 }, "slow");
+        $(document).ready(function () {
+            $('#dataTable').DataTable();
+        });
     </script>
 </body>
 </html>

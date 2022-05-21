@@ -99,7 +99,7 @@
                                         </ul>
                                     </div>
                                     <div class="add_to_cart">
-                                        <a href="/Cart/AddItem?id=@item.Id&quantity=1" title="add to cart">Add to cart</a>
+                                        <a onclick="AddItem(@item.Id)" title="add to cart">Add to cart</a>
                                     </div>
                                 </div>
                                 <div class="product_content grid_content">
@@ -147,7 +147,7 @@
                                             </div>
                                         }
                                         <div class="cart_links_btn">
-                                            <a href="/Cart/AddItem?id=@item.Id&quantity=1" title="add to cart">Mua ngay</a>
+                                            <a onclick="AddItem(@item.Id)" title="add to cart">Mua ngay</a>
                                         </div>
                                         <div class="action_list_links">
                                             <ul>

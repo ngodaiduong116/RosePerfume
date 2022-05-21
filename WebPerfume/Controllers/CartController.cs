@@ -31,25 +31,83 @@ namespace WebPerfume.Controllers
             obj.Title = "Test Mail";
             obj.Body = "Html";
             obj.Content = "Thông báo khách hàng đặt hàng thành công";
-            await GetTemplate(obj);
-
+            //await GetTemplate(obj);
 
             var listResult = new List<Cart>();
             if ((string)Session["UserClientUsername"] != "")
             {
                 var userCurrent = (string)Session["UserClientUsername"].ToString();
-                var getCus = new CustomerDAO().getCustomer(userCurrent);
+                var getCus = db.Customers.FirstOrDefault(x => x.Username == userCurrent);
                 var listProductInCart = db.Carts.Where(x => x.CustomerId == getCus.Id).ToList();
-                listResult = listProductInCart;
-                ViewBag.SoLuong = listProductInCart.Count;
+                if (listProductInCart.Count != 0)
+                {
+                    var listItemReMove = new List<Cart>();
+                    listProductInCart.ForEach(item =>
+                    {
+                        if (item.Product.Quantity == 0)
+                        {
+                            listItemReMove.Add(item);
+                        }
+                        else
+                        {
+                            if (item.Quantity > item.Product.Quantity)
+                            {
+                                var getObj = db.Carts.FirstOrDefault(x => x.Id == item.Id);
+                                getObj.Quantity = (int)item.Product.Quantity;
+                                listResult.Add(getObj);
+                                db.SaveChanges();
+                            }
+                            else
+                            {
+                                listResult.Add(item);
+                            }
+                        }
+                    });
+
+                    if (listItemReMove.Count != 0)
+                    {
+                        db.Carts.RemoveRange(listItemReMove);
+                        db.SaveChanges();
+                    }
+                }
+                else
+                {
+                    listResult = listProductInCart;
+                }
+                ViewBag.SoLuong = listResult.Count;
             }
             else
             {
                 var getCartOfSession = Session[CartSession];
                 if (getCartOfSession != null)
                 {
-                    listResult = (List<Cart>)getCartOfSession;
-                    ViewBag.SoLuong = ((List<Cart>)getCartOfSession).Count;
+                    var listProductInCart = (List<Cart>)getCartOfSession;
+                    //var listItemReMove = new List<Cart>();
+                    listProductInCart.ForEach(item =>
+                    {
+                        if (item.Product.Quantity == 0)
+                        {
+                            listProductInCart.Remove(item);
+                        }
+                        else
+                        {
+                            if (item.Product.Quantity < item.Quantity)
+                            {
+                                item.Quantity = (int)item.Product.Quantity;
+                            }
+                        }
+                    });
+
+                    if (listProductInCart.Count == 0)
+                    {
+                        ViewBag.SoLuong = 0;
+                    }
+                    else
+                    {
+                        listResult = listProductInCart;
+                        Session[CartSession] = listProductInCart;
+                        ViewBag.SoLuong = listProductInCart.Count;
+                    }
                 }
                 else
                 {
@@ -102,93 +160,353 @@ namespace WebPerfume.Controllers
             return sb.ToString();
         }
 
+        [HttpPost]
+        public ActionResult AddItems(int id, int quantity)
+        {
+            int quantityProductCurrent = (int)db.Products.FirstOrDefault(x => x.Id == id).Quantity;
+            if (quantityProductCurrent == 0)
+            {
+                return new HttpStatusCodeResult(HttpStatusCode.BadRequest, "error");
+            }
+            else
+            {
+                if ((string)Session["UserClientUsername"] != "")
+                {
+                    var userCurrent = (string)Session["UserClientUsername"].ToString();
+                    var getCus = db.Customers.FirstOrDefault(x => x.Username == userCurrent);
+                    var getListProductInCart = db.Carts.Where(x => x.CustomerId == getCus.Id).ToList();
+                    if (getListProductInCart.Count != 0 && getListProductInCart.Exists(x => x.ProductId == id && x.CustomerId == getCus.Id))
+                    {
+                        var ext = getListProductInCart.Find(x => x.ProductId == id);
+                        ext.Quantity = (ext.Quantity + quantity) > quantityProductCurrent ? quantityProductCurrent : (ext.Quantity + quantity);
+                    }
+                    else
+                    {
+                        var getProduct = db.Products.FirstOrDefault(x => x.Id == id);
+                        var newItem = new Cart();
+                        newItem.ProductId = id;
+                        newItem.CustomerId = getCus.Id;
+                        newItem.Product = getProduct;
+                        newItem.Quantity = quantity;
+                        newItem.Created = DateTime.Now;
+
+                        db.Carts.Add(newItem);
+                    }
+                    db.SaveChanges();
+                }
+                else
+                {
+                    var productOfCart = Session[CartSession];
+                    if (productOfCart != null && ((List<Cart>)productOfCart).Exists(x => x.ProductId == id) == true)
+                    {
+                        var listProductByCart = (List<Cart>)productOfCart;
+                        var ext = listProductByCart.Find(x => x.ProductId == id);
+                        if (ext != null)
+                        {
+                            ext.Quantity = (ext.Quantity + quantity) > quantityProductCurrent ? quantityProductCurrent : (ext.Quantity + quantity);
+                            ext.Created = DateTime.Now;
+                        }
+                        Session[CartSession] = listProductByCart;
+                    }
+                    else
+                    {
+                        var getProduct = db.Products.FirstOrDefault(x => x.Id == id);
+                        var newItem = new Cart();
+                        newItem.ProductId = id;
+                        newItem.Product = getProduct;
+                        newItem.Quantity = quantity;
+                        newItem.Created = DateTime.Now;
+
+                        if (productOfCart == null)
+                        {
+                            var listResult = new List<Cart>();
+                            listResult.Add(newItem);
+                            Session[CartSession] = listResult;
+                        }
+                        else
+                        {
+                            var listProduct = (List<Cart>)Session[CartSession];
+                            listProduct.Add(newItem);
+                            Session[CartSession] = listProduct;
+                        }
+                    }
+                }
+                return RedirectToAction("Index", "Cart");
+            }
+        }
+
+        [HttpPost]
         public ActionResult AddItem(int id, int quantity)
         {
+            int quantityProductCurrent = (int)db.Products.FirstOrDefault(x => x.Id == id).Quantity;
+            if (quantityProductCurrent == 0)
+            {
+                return Json(false);
+            }
+            else
+            {
+                if ((string)Session["UserClientUsername"] != "")
+                {
+                    var userCurrent = (string)Session["UserClientUsername"].ToString();
+                    var getCus = db.Customers.FirstOrDefault(x => x.Username == userCurrent);
+                    var getListProductInCart = db.Carts.Where(x => x.CustomerId == getCus.Id).ToList();
+                    if (getListProductInCart.Count != 0 && getListProductInCart.Exists(x => x.ProductId == id && x.CustomerId == getCus.Id))
+                    {
+                        var ext = getListProductInCart.Find(x => x.ProductId == id);
+                        ext.Quantity = (ext.Quantity + quantity) > quantityProductCurrent ? quantityProductCurrent : (ext.Quantity + quantity);
+                    }
+                    else
+                    {
+                        var getProduct = db.Products.FirstOrDefault(x => x.Id == id);
+                        var newItem = new Cart();
+                        newItem.ProductId = id;
+                        newItem.CustomerId = getCus.Id;
+                        newItem.Product = getProduct;
+                        newItem.Quantity = quantity;
+                        newItem.Created = DateTime.Now;
+
+                        db.Carts.Add(newItem);
+                    }
+                    db.SaveChanges();
+                }
+                else
+                {
+                    var productOfCart = Session[CartSession];
+                    if (productOfCart != null && ((List<Cart>)productOfCart).Exists(x => x.ProductId == id) == true)
+                    {
+                        var listProductByCart = (List<Cart>)productOfCart;
+                        var ext = listProductByCart.Find(x => x.ProductId == id);
+                        if (ext != null)
+                        {
+                            ext.Quantity = (ext.Quantity + quantity) > quantityProductCurrent ? quantityProductCurrent : (ext.Quantity + quantity);
+                            ext.Created = DateTime.Now;
+                        }
+                        Session[CartSession] = listProductByCart;
+                    }
+                    else
+                    {
+                        var getProduct = db.Products.FirstOrDefault(x => x.Id == id);
+                        var newItem = new Cart();
+                        newItem.ProductId = id;
+                        newItem.Product = getProduct;
+                        newItem.Quantity = quantity;
+                        newItem.Created = DateTime.Now;
+
+                        if (productOfCart == null)
+                        {
+                            var listResult = new List<Cart>();
+                            listResult.Add(newItem);
+                            Session[CartSession] = listResult;
+                        }
+                        else
+                        {
+                            var listProduct = (List<Cart>)Session[CartSession];
+                            listProduct.Add(newItem);
+                            Session[CartSession] = listProduct;
+                        }
+                    }
+                }
+                //return RedirectToAction("Index", "Cart");
+                return Json(true);
+            }
+        }
+
+        public ActionResult AddItemFromDetailProduct(int id, int quantity)
+        {
+            int quantityProductCurrent = (int)db.Products.FirstOrDefault(x => x.Id == id).Quantity;
             if ((string)Session["UserClientUsername"] != "")
             {
                 var userCurrent = (string)Session["UserClientUsername"].ToString();
                 var getCus = db.Customers.FirstOrDefault(x => x.Username == userCurrent);
                 var getListProductInCart = db.Carts.Where(x => x.CustomerId == getCus.Id).ToList();
-                if (getListProductInCart.Count != 0 && getListProductInCart.Exists(x => x.ProductId == id && x.CustomerId == getCus.Id) == true)
+                if (getListProductInCart.Count != 0 && getListProductInCart.Exists(x => x.ProductId == id))
                 {
-                    var ext = getListProductInCart.Find(x => x.ProductId == id);
-                    if(ext != null)
+                    var getProductInCart = getListProductInCart.Find(x => x.ProductId == id);
+                    if (getProductInCart.Quantity == quantityProductCurrent && quantity == 1)
                     {
-                        ext.Quantity += quantity;
-                    }                   
+                    }
+                    else
+                    {
+                        getProductInCart.Quantity = quantity;
+                    }
                 }
                 else
                 {
-                    var getProduct = db.Products.FirstOrDefault(x => x.Id == id);
-                    var newItem = new Cart();
-                    newItem.ProductId = id;
-                    newItem.CustomerId = getCus.Id;
-                    newItem.Product = getProduct;
-                    newItem.Quantity = quantity;
-                    newItem.Created = DateTime.Now;
-
-                    db.Carts.Add(newItem);
+                    var newProduct = new Cart();
+                    newProduct.CustomerId = getCus.Id;
+                    newProduct.ProductId = id;
+                    newProduct.Quantity = quantity;
+                    newProduct.Created = DateTime.Now;
+                    newProduct.Product = db.Products.FirstOrDefault(x => x.Id == id);
+                    newProduct.Customer = getCus;
+                    db.Carts.Add(newProduct);
                 }
                 db.SaveChanges();
             }
             else
             {
+                var resultData = new List<Cart>();
                 var productOfCart = Session[CartSession];
-                if (productOfCart != null && ((List<Cart>)productOfCart).Exists(x => x.ProductId == id) == true)
+                if (productOfCart != null)
                 {
-                    var listProductByCart = (List<Cart>)productOfCart;
-                    var ext = listProductByCart.Find(x => x.ProductId == id);
-                    if (ext != null)
+                    var listProductOfCart = (List<Cart>)productOfCart;
+                    if (listProductOfCart.Exists(x => x.ProductId == id))
                     {
-                        ext.Quantity += quantity;
-                        ext.Created = DateTime.Now;
-                    }
-                    Session[CartSession] = listProductByCart;
-                }
-                else
-                {
-                    var getProduct = db.Products.FirstOrDefault(x => x.Id == id);
-                    var newItem = new Cart();
-                    newItem.ProductId = id;
-                    newItem.Product = getProduct;
-                    newItem.Quantity = quantity;
-                    newItem.Created = DateTime.Now;
-
-                    if (productOfCart == null)
-                    {
-                        var listResult = new List<Cart>();
-                        listResult.Add(newItem);
-                        Session[CartSession] = listResult;
+                        var getObj = listProductOfCart.Find(x => x.ProductId == id);
+                        if (getObj.Quantity == quantityProductCurrent && quantity == 1)
+                        {
+                        }
+                        else
+                        {
+                            getObj.Quantity = quantity;
+                        }
                     }
                     else
                     {
-                        var listProduct = (List<Cart>)Session[CartSession];
-                        listProduct.Add(newItem);
-                        Session[CartSession] = listProduct;
+                        var newProduct = new Cart();
+                        newProduct.ProductId = id;
+                        newProduct.Quantity = quantity;
+                        newProduct.Created = DateTime.Now;
+                        newProduct.Product = db.Products.FirstOrDefault(x => x.Id == id);
+                        listProductOfCart.Add(newProduct);
                     }
+                    resultData = listProductOfCart;
                 }
+                else
+                {
+                    var newProduct = new Cart();
+                    newProduct.ProductId = id;
+                    newProduct.Quantity = quantity;
+                    newProduct.Created = DateTime.Now;
+                    newProduct.Product = db.Products.FirstOrDefault(x => x.Id == id);
+                    resultData.Add(newProduct);
+                }
+                Session[CartSession] = resultData;
+
+                //if (productOfCart != null && ((List<Cart>)productOfCart).Count != 0 && ((List<Cart>)productOfCart).Exists(x => x.ProductId == id))
+                //{
+                //    var ext = ((List<Cart>)productOfCart).Find(x => x.ProductId == id);
+                //    if (ext.Quantity == quantityProductCurrent && quantity == 1)
+                //    {
+                //    }
+                //    {
+                //        ext.Quantity = quantity;
+                //    }
+                //}
+                //else
+                //{
+                //    if (((List<Cart>)productOfCart).Count != 0)
+                //    {
+                //        var newProduct = new Cart();
+                //        newProduct.ProductId = id;
+                //        newProduct.Quantity = quantity;
+                //        newProduct.Created = DateTime.Now;
+                //        newProduct.Product = db.Products.FirstOrDefault(x => x.Id == id);
+                //        var result = ((List<Cart>)productOfCart).Add(newProduct);
+                //    }
+                //}
+                //Session[CartSession] = listProductByCart;
             }
             return RedirectToAction("Index");
         }
 
         public JsonResult Update(string cartModel)
         {
-            var jsonCart = new JavaScriptSerializer().Deserialize<List<CartItem>>(cartModel);
-            var sessionCart = (List<CartItem>)Session[CartSession];
-            foreach (var item in sessionCart)
+            int quantityBefore = 1;
+            bool flag = true;
+            try
             {
-                var jsonItem = jsonCart.SingleOrDefault(n => n.Product.Id == item.Product.Id);
-                if (jsonItem != null)
+                var jsonCart = new JavaScriptSerializer().Deserialize<Cart>(cartModel);
+                int quantityProductCurrent = (int)db.Products.FirstOrDefault(x => x.Id == jsonCart.Product.Id).Quantity;
+                if ((string)Session["UserClientUsername"] != "")
                 {
-                    item.quantity = jsonItem.quantity;
-                    item.Total = jsonItem.quantity * item.Product.Price;
+                    var userCurrent = (string)Session["UserClientUsername"].ToString();
+                    var getCus = db.Customers.FirstOrDefault(x => x.Username == userCurrent);
+                    var getProductInCart = db.Carts.FirstOrDefault(x => x.CustomerId == getCus.Id && x.ProductId == jsonCart.Product.Id);
+                    if (jsonCart.Quantity <= 0)
+                    {
+                        db.Carts.Remove(getProductInCart);
+                        flag = false;
+                    }
+                    else
+                    {
+                        if (jsonCart.Quantity <= quantityProductCurrent)
+                        {
+                            getProductInCart.Quantity = jsonCart.Quantity;
+                        }
+                        else
+                        {
+                            getProductInCart.Quantity = quantityProductCurrent;
+                            quantityBefore = quantityProductCurrent;
+                        }
+                    }
+
+                    db.SaveChanges();
+                }
+                else
+                {
+                    var sessionCart = (List<Cart>)Session[CartSession];
+                    var getProduct = sessionCart.Find(x => x.ProductId == jsonCart.Product.Id);
+                    if (jsonCart.Quantity <= 0)
+                    {
+                        sessionCart.Remove(getProduct);
+                        flag = false;
+                    }
+                    else
+                    {
+                        if (jsonCart.Quantity <= quantityProductCurrent)
+                        {
+                            getProduct.Quantity = jsonCart.Quantity;
+                        }
+                        else
+                        {
+                            getProduct.Quantity = quantityProductCurrent;
+                            quantityBefore = quantityProductCurrent;
+                        }
+                    }
+                    Session[CartSession] = sessionCart;
+                }
+
+                if (quantityBefore == 1 && flag == false)
+                {
+                    //Xóa sản phẩm khỏi giỏ hàng
+                    return Json(new
+                    {
+                        status = false,
+                        quantityBefore = 0
+                    });
+                }
+                else
+                {
+                    if (quantityBefore == 1)
+                    {
+                        // thay đổi số lượng sản phẩm trong giới hạn cho phép, cập nhập lại giỏ hàng, gán lại giá trị
+                        return Json(new
+                        {
+                            status = true,
+                            quantityBefore = 1
+                        });
+                    }
+                    else
+                    {
+                        // thay đổi lớn hơn só lượng cho phép,gán lại số lượng max
+                        return Json(new
+                        {
+                            status = true,
+                            quantityBefore = quantityBefore
+                        });
+                    }
                 }
             }
-            Session[CartSession] = sessionCart;
-            return Json(new
+            catch
             {
-                status = true
-            });
+                //Lỗi xảy ra xóa sản phẩm khỏi giỏ hàng
+                return Json(new
+                {
+                    status = false,
+                    quantityBefore = 0
+                });
+            }
         }
 
         public JsonResult DeleteAll()
@@ -201,21 +519,81 @@ namespace WebPerfume.Controllers
             });
         }
 
+        // có dùng
         public JsonResult Delete(int id)
         {
-            var sessionCart = (List<CartItem>)Session[CartSession];
-            sessionCart.RemoveAll(n => n.Product.Id == id);
-            Session[CartSession] = sessionCart;
-            return Json(new
+            try
             {
-                status = true
-            });
+                if ((string)Session["UserClientUsername"] != "")
+                {
+                    var userCurrent = (string)Session["UserClientUsername"].ToString();
+                    var getCus = db.Customers.FirstOrDefault(x => x.Username == userCurrent);
+                    var getProOfCart = db.Carts.Where(x => x.CustomerId == getCus.Id && x.ProductId == id).ToList();
+                    db.Carts.RemoveRange(getProOfCart);
+                    db.SaveChanges();
+                }
+                else
+                {
+                    var sessionCart = (List<Cart>)Session[CartSession];
+                    sessionCart.RemoveAll(n => n.ProductId == id);
+                    Session[CartSession] = sessionCart;
+                }
+                return Json(new
+                {
+                    status = true
+                });
+            }
+            catch (Exception ex)
+            {
+                return Json(new
+                {
+                    status = false
+                });
+            }
+        }
+
+        //[HttpPost]
+        //public ActionResult UpdateCart(string user)
+        //{
+        //    if (string.IsNullOrEmpty(user))
+        //    {
+        //        var getCartOfSession = Session[CartSession];
+        //        if (getCartOfSession != null)
+        //        {
+        //            listResult = (List<Cart>)getCartOfSession;
+        //        }
+        //    }
+        //    return Json(true);
+        //}
+
+        [HttpPost]
+        public ActionResult CheckCart()
+        {
+            bool isHaveProduct = true;
+            if ((string)Session["UserClientUsername"] != "")
+            {
+                var userCurrent = (string)Session["UserClientUsername"].ToString();
+                var getCus = new CustomerDAO().getCustomer(userCurrent);
+                var listProductInCart = db.Carts.Where(x => x.CustomerId == getCus.Id).ToList();
+                if (listProductInCart.Count == 0)
+                {
+                    isHaveProduct = false;
+                }
+            }
+            else
+            {
+                var getCartOfSession = Session[CartSession];
+                if (getCartOfSession == null || ((List<Cart>)getCartOfSession).Count == 0)
+                {
+                    isHaveProduct = false;
+                }
+            }
+            return Json(isHaveProduct);
         }
 
         [HttpGet]
         public ActionResult Payment()
         {
-
             var listResult = new List<Cart>();
             if ((string)Session["UserClientUsername"] != "")
             {
@@ -227,7 +605,10 @@ namespace WebPerfume.Controllers
             else
             {
                 var getCartOfSession = Session[CartSession];
-                listResult = (List<Cart>)getCartOfSession;
+                if (getCartOfSession != null)
+                {
+                    listResult = (List<Cart>)getCartOfSession;
+                }
             }
             return View(listResult);
         }
@@ -236,57 +617,66 @@ namespace WebPerfume.Controllers
         public ActionResult Payment(string shipName, string mobile, string address, string email)
         {
             Order order = new Order();
+            var listProduct = new List<Cart>();
             if ((string)Session["UserClientUsername"] != "")
             {
                 var username = (string)Session["UserClientUsername"];
                 var customer = db.Customers.Where(x => x.Username == username).FirstOrDefault();
+                order.CustomerId = customer.Id;
                 order.ShipName = customer.Name;
-                order.ShipAddress = customer.Address;
                 order.ShipMobile = customer.Mobile;
+                order.ShipAddress = customer.Address;
                 order.ShipEmail = customer.Email;
+                order.CreateDate = DateTime.Now;
+                order.Status = EnumStatus.New;
+                listProduct = db.Carts.Where(x => x.CustomerId == customer.Id).ToList();
             }
             else
             {
-                order.CreateDate = DateTime.Now;
-                order.ShipAddress = address;
-                order.ShipMobile = mobile;
                 order.ShipName = shipName;
+                order.ShipMobile = mobile;
+                order.ShipAddress = address;
                 order.ShipEmail = email;
+                order.CreateDate = DateTime.Now;
+
+                listProduct = (List<Cart>)Session[CartSession];
             }
+
             try
             {
-                var id = new OrderDAO().Insert(order);
-                var cart = (List<CartItem>)Session[CartSession];
-                var detailDao = new OrderDetailDAO();
-                //decimal total = 0;
-                foreach (var item in cart)
+                db.Orders.Add(order);
+                db.SaveChanges();
+                foreach (var item in listProduct)
                 {
-                    var orderDetail = new OrderDetail();
-                    orderDetail.ProductId = item.Product.Id;
-                    orderDetail.OrderId = id;
-                    if (item.Product.PromotionPrice != null)
-                    {
-                        orderDetail.Price = item.Product.PromotionPrice;
-                    }
-                    else
-                    {
-                        orderDetail.Price = item.Product.Price;
-                    }
-                    orderDetail.Quantity = item.quantity;
-                    detailDao.Insert(orderDetail);
+                    var newOrderDetails = new OrderDetail();
+                    newOrderDetails.OrderId = order.Id;
+                    newOrderDetails.ProductId = item.ProductId;
+                    newOrderDetails.Quantity = item.Quantity;
+                    newOrderDetails.Price = (item.Product.PromotionPrice != null && item.Product.PromotionPrice.Value != 0) ? item.Product.PromotionPrice : item.Product.Price;
+                    newOrderDetails.TotalMoney = newOrderDetails.Quantity * newOrderDetails.Price;
 
-                    //total += (item.SanPham.Gia.GetValueOrDefault(0) * item.quantity);
+                    var getProduct = db.Products.FirstOrDefault(x => x.Id == item.ProductId);
+                    getProduct.Quantity = getProduct.Quantity - item.Quantity;
 
-                    //Sub quantiy in Product table
-                    var product = new ProductDAO();
-                    product.setQuantity(orderDetail.ProductId, orderDetail.Quantity);
+                    db.OrderDetails.Add(newOrderDetails);
                 }
-                Session.Remove(CartSession);
-                SetAlert("Mua hàng thành công", "success");
 
-                MailHelper obj = new MailHelper();
+                if ((string)Session["UserClientUsername"] != "")
+                {
+                    var username = (string)Session["UserClientUsername"];
+                    var customer = db.Customers.Where(x => x.Username == username).FirstOrDefault();
+                    var getListProductInCart = db.Carts.Where(x => x.CustomerId == customer.Id).ToList();
+                    db.Carts.RemoveRange(getListProductInCart);
+                }
+                else
+                {
+                    Session.Remove(CartSession);
+                }
+                db.SaveChanges();
+                //MailHelper obj = new MailHelper();
                 //string dd = System.IO.File.ReadAllText(Server.MapPath("~/Common/Template/FormMail.html"));
-                obj.SendMail("xoai2201@gmail.com", "Test", "Hello");
+                //obj.SendMail("xoai2201@gmail.com", "Test", "Hello");
+                SetAlert("Mua hàng thành công", "success");
             }
             catch (Exception ex)
             {
@@ -312,5 +702,18 @@ namespace WebPerfume.Controllers
                 return PartialView(order);
             }
         }
+
+        //public bool checkQuantityBeforeAddItem(int idProduct, int quantityAdd, int idCustomer = 0)
+        //{
+        //    bool flag = true;
+        //    var getQuantityProduct = db.Products.FirstOrDefault(x => x.Id == idProduct).Quantity;
+        //    if (idCustomer != 0)
+        //    {
+        //        var getQuantityProductInCart = db.Carts.FirstOrDefault(x => x.CustomerId == idCustomer && x.ProductId == idProduct);
+        //        if (getQuantityProductInCart != null)
+        //        {
+        //        }
+        //    }
+        //}
     }
 }

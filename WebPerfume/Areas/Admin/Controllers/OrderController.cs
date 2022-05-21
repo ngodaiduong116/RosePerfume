@@ -6,6 +6,7 @@ using System.Web;
 using System.Web.Mvc;
 using System.Web.UI;
 using System.Web.UI.WebControls;
+using WebPerfume.Common;
 using WebPerfume.Models.DAO;
 using WebPerfume.Models.EF;
 
@@ -13,7 +14,8 @@ namespace WebPerfume.Areas.Admin.Controllers
 {
     public class OrderController : BaseController
     {
-        RosePerfumeDBModel db = new RosePerfumeDBModel();
+        private RosePerfumeDBModel db = new RosePerfumeDBModel();
+
         // GET: Admin/Order
         public ActionResult Index(string searchString, int page = 1, int pagesize = 5)
         {
@@ -78,29 +80,49 @@ namespace WebPerfume.Areas.Admin.Controllers
         public ActionResult Delete(int id)
         {
             Order order = db.Orders.Find(id);
-            
+            order.Status = EnumStatus.Cancel;
+
             //Delete in order detail and Add turn quantity of product
-            OrderDetail orderDetail = db.OrderDetails.FirstOrDefault(x => x.OrderId == order.Id);
-            Product product = db.Products.FirstOrDefault(x => x.Id == orderDetail.ProductId);
-            
-            if (product != null)
+            List<OrderDetail> listOrderDetail = db.OrderDetails.Where(x => x.OrderId == order.Id).ToList();
+            listOrderDetail.ForEach(item =>
             {
-                product.Quantity += orderDetail.Quantity;
-            }
-            db.Orders.Remove(order);
+                var getProduct = db.Products.FirstOrDefault(x => x.Id == item.ProductId);
+                getProduct.Quantity += item.Quantity;
+            });
             db.SaveChanges();
+            // thông báo cho khách hàng tại đây
             SetAlert("Hủy đơn thành công", "success");
             return Redirect("/Admin/Order");
         }
 
-
-        public JsonResult ChangeStatus(int? id)
+        [HttpGet]
+        public ActionResult HandleNewOrder(int id)
         {
-            var result = new OrderDAO().ChangeStatus(id);
-            return Json(new
+            try
             {
-                status = result
-            });
+                var getOrder = db.Orders.FirstOrDefault(x => x.Id == id);
+                getOrder.Status = EnumStatus.Pendding;
+                db.SaveChanges();
+            }
+            catch
+            {
+            }
+            return Redirect("/Admin/Order");
+        }
+
+        [HttpGet]
+        public ActionResult HandleApprove(int id)
+        {
+            try
+            {
+                var getOrder = db.Orders.FirstOrDefault(x => x.Id == id);
+                getOrder.Status = EnumStatus.Approved;
+                db.SaveChanges();
+            }
+            catch
+            {
+            }
+            return Redirect("/Admin/Order");
         }
 
         [HttpPost]
@@ -111,7 +133,7 @@ namespace WebPerfume.Areas.Admin.Controllers
                              on od.OrderId equals o.Id
                              join p in db.Products
                              on od.ProductId equals p.Id
-                             select new 
+                             select new
                              {
                                  Name = o.ShipName,
                                  Email = o.ShipEmail,

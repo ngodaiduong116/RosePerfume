@@ -4,10 +4,10 @@
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-
 @section jsFooter{
-    <script src="~/Content/EventJs/cartController.js"></script>
+    <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
 }
+
 <!--breadcrumbs area start-->
 <div class="breadcrumbs_area">
     <div class="container">
@@ -48,32 +48,30 @@
                                 <tbody>
                                     @foreach (var item in Model)
                                     {
-                                    <tr>
-                                        <td class="product_remove">
-                                            <a href="#" data-id="@item.Product.Id" class="btn-delete"><i class="far fa-trash-alt"></i></a>
-                                        </td>
-                                        <td class="product_thumb">
-                                            <a href="#">
-                                                <img src="@item.Product.Image" width="200px" height="150px" alt="">
-                                            </a>
-                                        </td>
-                                        <td class="product_name"><a href="#">@item.Product.Name</a></td>
-                                        @if (item.Product.PromotionPrice != null)
-                                        {
-                                            <td class="product-price">@item.Product.PromotionPrice.GetValueOrDefault(0).ToString("N0")</td>
-                                        }
-                                        else
-                                        {
-                                            <td class="product-price">@item.Product.Price.GetValueOrDefault(0).ToString("N0")</td>
-                                        }
+                                        <tr>
+                                            <td class="product_remove">
+                                                <a href="#" data-id="@item.Product.Id" onclick="handleRemoveProduct(@item.ProductId)" class="btn-delete"><i class="far fa-trash-alt"></i></a>
+                                            </td>
+                                            <td class="product_thumb">
+                                                <a href="#">
+                                                    <img src="@item.Product.Image" width="200px" height="150px" alt="">
+                                                </a>
+                                            </td>
+                                            <td class="product_name"><a href="#">@item.Product.Name</a></td>
+                                            @if (item.Product.PromotionPrice != null)
+                                            {
+                                                <td class="product-price">@item.Product.PromotionPrice.GetValueOrDefault(0).ToString("N0")</td>
+                                            }
+                                            else
+                                            {
+                                                <td class="product-price">@item.Product.Price.GetValueOrDefault(0).ToString("N0")</td>
+                                            }
 
-                                        <td class="product_quantity">
-                                            <label>Số lượng</label> <input min="1" max="100" class="txtquantity" onchange="updateQuantity()" data-id="@item.Product.Id" value="@item.Quantity" type="number">
-                                        </td>
-                                        @*<td class="product_total">@((item.Product.PromotionPrice.GetValueOrDefault(0)*item.quantity).ToString("N0"))</td>*@
-                                        <td class="product_total">@(item.Total.ToString("N0"))</td>
-
-                                    </tr>
+                                            <td class="product_quantity">
+                                                <label>Số lượng</label> <input min="1" max="@item.Product.Quantity" onchange="updateQuantity(this.value, @item.Product.Id)" id="Id-@item.Product.Id" class="txtquantity" data-id="@item.Product.Id" value="@item.Quantity" type="number">
+                                            </td>
+                                            <td class="product_total">@(item.Total.ToString("N0"))</td>
+                                        </tr>
                                     }
                                 </tbody>
                             </table>
@@ -82,45 +80,102 @@
                         {
                             <span class="alert alert-danger">Chưa có sản phẩm nào trong giỏ hàng</span>
                         }
-
                     </div>
                     <div class="row" style="float:right;">
                         <div class="cart_submit">
-                            <button id="btnPayment" type="submit">Mua ngay</button>
+                            <button id="btnPayment" onclick="handlePayment()" type="submit">Mua ngay</button>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
-
     </div>
 </div>
 <!--shopping cart area end -->
 
 <script>
-    function updateQuantity() {
-        var listsp = $('.txtquantity');
-        var cartList = [];
-        $.each(listsp, function (i, item) {
-            cartList.push({
-                quantity: $(item).val(),
-                Product: {
-                    Id: $(item).data('id')
-                }
-            });
-        });
 
+    function handlePayment() {
         $.ajax({
-            url: '/Cart/Update',
-            data: { cartModel: JSON.stringify(cartList) },
+            url: 'Cart/CheckCart',
             dataType: 'json',
             type: 'POST',
-            success: function (res) {
-                if (res.status == true) {
+            success: function (response) {
+                if (response) {
+                    window.location.href = "/thanh-toan";
+                } else {
+                    swal("Error, My Cart is empty !", {
+                        icon: "warning",
+                    })
+                }
+            }
+        })         
+    }
+
+    function updateQuantity(value, id) {
+        var obj = {
+            Quantity: value,
+            Product: {
+                Id: id
+            }
+        }
+        $.ajax({
+            url: '/Cart/Update',
+            data: { cartModel: JSON.stringify(obj) },
+            dataType: 'json',
+            type: 'POST',
+            success: function (response) {
+                if (response.status && response.quantityBefore != 1) {
+                    swal("Error, You can not update quantity product", {
+                        icon: "warning",
+                    }).then(() => {
+                        var idRow = `#Id-${id}`;
+                        $(idRow).val(response.quantityBefore);
+                        window.location.href = "/Cart";
+                    })
+                } else {
                     window.location.href = "/Cart";
                 }
-
+            },
+            error: function () {
+                window.location.href = "/Cart";
             }
         })
     };
+
+    function handleRemoveProduct(idProduct) {
+        swal({
+            title: "Are you sure?",
+            text: "Are you sure remove this product !",
+            icon: "warning",
+            buttons: true,
+            dangerMode: true,
+        }).then((willDelete) => {
+            console.log(willDelete);
+            if (willDelete) {
+
+                $.ajax({
+                    data: { id: idProduct },
+                    url: '/Cart/Delete',
+                    dataType: 'json',
+                    type: 'POST',
+                    success: function (res) {
+                        if (res.status == true) {
+                            swal("Your product has been deleted!", {
+                                icon: "success",
+                            }).then(() => {
+                                window.location.href = "/Cart";
+                            });
+                        } else {
+                            swal("Error, You can not remove product from the cart", {
+                                icon: "warning",
+                            })
+                        }
+                    }
+                })
+            } else {
+
+            }
+        });
+    }
 </script>
