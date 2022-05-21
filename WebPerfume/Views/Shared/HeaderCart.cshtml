@@ -29,15 +29,12 @@
                     {
                         <span class="price_cart">@((item.Product.Price.GetValueOrDefault(0)*item.Quantity).ToString("N0"))</span>
                     }
-
-
                 </div>
                 <div class="cart_remove">
-                    <a href="#" data-id="@item.Product.Id" onclick="handleRemoveProductOnHeader(@item.ProductId, @item.Id)" class="btn-delete"><i class="fas fa-times"></i></a>
+                    <a data-id="@item.Product.Id" onclick="handleRemoveProductOnHeader(@item.ProductId, @item.Id)" class="btn-delete"><i class="fas fa-times"></i></a>
                 </div>
             </div>
         }
-
 
         <div class="mini_cart_table">
             <div class="cart_total mt-10">
@@ -51,15 +48,12 @@
                 <a href="/Cart">Giỏ hàng</a>
             </div>
             <div class="cart_button">
-                <a onclick="onclickPayment()" >Thanh toán</a>
+                <a onclick="onclickPayment()">Thanh toán</a>
             </div>
-
         </div>
-
     </div>
     <!--mini cart end-->
 </div>
-
 
 <script>
 
@@ -75,7 +69,7 @@
                     swal("Error, My Cart is empty !", {
                         icon: "warning",
                     })
-                }                
+                }
             }
         })
     }
@@ -91,7 +85,7 @@
             dataType: 'json',
             type: 'POST',
             success: function (res) {
-                if (res.status == true) {                    
+                if (res.status == true) {
                     var getElement = `#cartProduct-${idCart}`;
                     $(getElement).remove();
                     var getQuatityShow = $("#quantityProductInCart").html();
@@ -99,13 +93,13 @@
                     var listsp = $('.price_cart');
                     var newTotal = 0;
                     $.each(listsp, function (index, item) {
-                        var convertPrice = $(item).text().replaceAll(",","");
-                        newTotal += parseInt(convertPrice)                        
-                    });                  
+                        var convertPrice = $(item).text().replaceAll(",", "");
+                        newTotal += parseInt(convertPrice)
+                    });
                     newTotal = newTotal.toLocaleString('vi', { style: 'currency', currency: 'VND' });
                     $("#totalCard").html(newTotal);
-                    console.log(window.location.href);
                     if (window.location.href == "https://localhost:44329/my-cart#") {
+                        console.log(window.location.href);
                         window.location.href = "/my-cart";
                     }
                 } else {
@@ -116,5 +110,4 @@
             }
         })
     }
-
 </script>

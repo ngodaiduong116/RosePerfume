@@ -8,9 +8,12 @@ namespace WebPerfume.Models
 {
     public class CartItem
     {
-        public Product Product { get; set; }
-
-        public int quantity { get; set; }
-        public decimal? Total { get; set; }
+        public string NameCustomer { get; set; }
+        public string NameProduct { get; set; }
+        public int Quantity { get; set; }
+        public decimal Price { get; set; }
+        public DateTime CreatedDate { get; set; }
+        public int Status { get; set; }
+        public decimal TotalMoney { get; set; }
     }
 }

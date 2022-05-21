@@ -4,7 +4,7 @@
     Layout = "~/Views/Shared/_Layout.cshtml";
     decimal? totalmoney = 0;
     foreach (var item in Model)
-    {        
+    {
         totalmoney += ((item.Product.PercentPromotion != null && item.Product.PromotionPrice.Value != 0) ? item.Product.PromotionPrice : item.Product.Price) * item.Quantity;
     }
 }
@@ -52,12 +52,10 @@
                                 <div class="col-lg-12 mb-20">
                                     <label>Số điện thoại<span>*</span></label>
                                     <input name="mobile" type="text">
-
                                 </div>
                                 <div class="col-lg-12 mb-20">
                                     <label> Email <span>*</span></label>
                                     <input name="email" type="text">
-
                                 </div>
                                 <div class="col-12">
                                     <div class="order-notes">
@@ -68,12 +66,10 @@
                                 </div>
                                 <div class="order_button mt-4 ml-3">
                                     <button type="submit">Thanh toán</button>
-                                    <button onclick="UpdateCart(null)" type="button">Cập nhật</button>
-                                </div>                                
+                                    @*<button onclick="UpdateCart(null)" type="button">Cập nhật</button>*@
+                                </div>
                             }
-
                         </div>
-
                     </div>
                 }
                 <div class="col-lg-6 col-md-6">
@@ -100,7 +96,6 @@
                                         {
                                             <td> @((item.Product.Price.GetValueOrDefault(0)*item.Quantity).ToString("N0"))</td>
                                         }
-
                                     </tr>
                                 }
                             </tbody>
@@ -118,10 +113,10 @@
                         <div>
                             @using (Html.BeginForm("Payment", "Cart", FormMethod.Post))
                             {
-                            <div class="order_button mt-4 ml-3">
-                                <button type="submit">Thanh toán</button>
-                                <button onclick="UpdateCart(@userCurrent)" type="button">Cập nhật</button>
-                            </div>
+                                <div class="order_button mt-4 ml-3">
+                                    <button type="submit">Thanh toán</button>
+                                    @*<button onclick="UpdateCart(@userCurrent)" type="button">Cập nhật</button>*@
+                                </div>
                             }
                         </div>
                     }
@@ -135,9 +130,10 @@
 <script>
 
     function UpdateCart(value) {
+        console.log(value);
         $.ajax({
             url: 'Cart/UpdateCart',
-            data: { user: value},
+            data: { user: value == null ? "" : value },
             dataType: 'json',
             type: 'POST',
             success: function (response) {
@@ -152,5 +148,4 @@
             }
         })
     }
-
 </script>

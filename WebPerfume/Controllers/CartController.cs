@@ -39,18 +39,18 @@ namespace WebPerfume.Controllers
                 var userCurrent = (string)Session["UserClientUsername"].ToString();
                 var getCus = db.Customers.FirstOrDefault(x => x.Username == userCurrent);
                 var listProductInCart = db.Carts.Where(x => x.CustomerId == getCus.Id).ToList();
-                if(listProductInCart.Count != 0)
+                if (listProductInCart.Count != 0)
                 {
                     var listItemReMove = new List<Cart>();
                     listProductInCart.ForEach(item =>
                     {
-                        if(item.Product.Quantity == 0)
+                        if (item.Product.Quantity == 0)
                         {
                             listItemReMove.Add(item);
                         }
                         else
-                        {                            
-                            if(item.Quantity > item.Product.Quantity)
+                        {
+                            if (item.Quantity > item.Product.Quantity)
                             {
                                 var getObj = db.Carts.FirstOrDefault(x => x.Id == item.Id);
                                 getObj.Quantity = (int)item.Product.Quantity;
@@ -60,11 +60,11 @@ namespace WebPerfume.Controllers
                             else
                             {
                                 listResult.Add(item);
-                            }                           
+                            }
                         }
                     });
 
-                    if(listItemReMove.Count != 0)
+                    if (listItemReMove.Count != 0)
                     {
                         db.Carts.RemoveRange(listItemReMove);
                         db.SaveChanges();
@@ -73,7 +73,7 @@ namespace WebPerfume.Controllers
                 else
                 {
                     listResult = listProductInCart;
-                }                
+                }
                 ViewBag.SoLuong = listResult.Count;
             }
             else
@@ -91,14 +91,14 @@ namespace WebPerfume.Controllers
                         }
                         else
                         {
-                            if(item.Product.Quantity < item.Quantity)
+                            if (item.Product.Quantity < item.Quantity)
                             {
                                 item.Quantity = (int)item.Product.Quantity;
-                            }                            
+                            }
                         }
                     });
 
-                    if(listProductInCart.Count == 0)
+                    if (listProductInCart.Count == 0)
                     {
                         ViewBag.SoLuong = 0;
                     }
@@ -107,7 +107,7 @@ namespace WebPerfume.Controllers
                         listResult = listProductInCart;
                         Session[CartSession] = listProductInCart;
                         ViewBag.SoLuong = listProductInCart.Count;
-                    }                    
+                    }
                 }
                 else
                 {
@@ -164,7 +164,7 @@ namespace WebPerfume.Controllers
         public ActionResult AddItems(int id, int quantity)
         {
             int quantityProductCurrent = (int)db.Products.FirstOrDefault(x => x.Id == id).Quantity;
-            if(quantityProductCurrent == 0)
+            if (quantityProductCurrent == 0)
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest, "error");
             }
@@ -347,20 +347,19 @@ namespace WebPerfume.Controllers
             {
                 var resultData = new List<Cart>();
                 var productOfCart = Session[CartSession];
-                if(productOfCart != null)
+                if (productOfCart != null)
                 {
                     var listProductOfCart = (List<Cart>)productOfCart;
-                    if(listProductOfCart.Exists(x => x.ProductId == id))
+                    if (listProductOfCart.Exists(x => x.ProductId == id))
                     {
                         var getObj = listProductOfCart.Find(x => x.ProductId == id);
-                        if(getObj.Quantity == quantityProductCurrent && quantity == 1)
+                        if (getObj.Quantity == quantityProductCurrent && quantity == 1)
                         {
-
                         }
                         else
                         {
                             getObj.Quantity = quantity;
-                        }                        
+                        }
                     }
                     else
                     {
@@ -370,7 +369,6 @@ namespace WebPerfume.Controllers
                         newProduct.Created = DateTime.Now;
                         newProduct.Product = db.Products.FirstOrDefault(x => x.Id == id);
                         listProductOfCart.Add(newProduct);
-
                     }
                     resultData = listProductOfCart;
                 }
@@ -385,14 +383,11 @@ namespace WebPerfume.Controllers
                 }
                 Session[CartSession] = resultData;
 
-
-
                 //if (productOfCart != null && ((List<Cart>)productOfCart).Count != 0 && ((List<Cart>)productOfCart).Exists(x => x.ProductId == id))
                 //{
                 //    var ext = ((List<Cart>)productOfCart).Find(x => x.ProductId == id);
                 //    if (ext.Quantity == quantityProductCurrent && quantity == 1)
                 //    {
-
                 //    }
                 //    {
                 //        ext.Quantity = quantity;
@@ -472,17 +467,18 @@ namespace WebPerfume.Controllers
                     Session[CartSession] = sessionCart;
                 }
 
-                if(quantityBefore == 1 && flag == false){
+                if (quantityBefore == 1 && flag == false)
+                {
                     //Xóa sản phẩm khỏi giỏ hàng
                     return Json(new
-                    {                        
+                    {
                         status = false,
                         quantityBefore = 0
                     });
                 }
                 else
                 {
-                    if(quantityBefore == 1)
+                    if (quantityBefore == 1)
                     {
                         // thay đổi số lượng sản phẩm trong giới hạn cho phép, cập nhập lại giỏ hàng, gán lại giá trị
                         return Json(new
@@ -555,11 +551,20 @@ namespace WebPerfume.Controllers
                 });
             }
         }
-        [HttpPost]
-        public ActionResult UpdateCart(string user)
-        {
-            return Json(true);
-        }
+
+        //[HttpPost]
+        //public ActionResult UpdateCart(string user)
+        //{
+        //    if (string.IsNullOrEmpty(user))
+        //    {
+        //        var getCartOfSession = Session[CartSession];
+        //        if (getCartOfSession != null)
+        //        {
+        //            listResult = (List<Cart>)getCartOfSession;
+        //        }
+        //    }
+        //    return Json(true);
+        //}
 
         [HttpPost]
         public ActionResult CheckCart()
@@ -570,7 +575,7 @@ namespace WebPerfume.Controllers
                 var userCurrent = (string)Session["UserClientUsername"].ToString();
                 var getCus = new CustomerDAO().getCustomer(userCurrent);
                 var listProductInCart = db.Carts.Where(x => x.CustomerId == getCus.Id).ToList();
-                if(listProductInCart.Count == 0)
+                if (listProductInCart.Count == 0)
                 {
                     isHaveProduct = false;
                 }
@@ -600,10 +605,10 @@ namespace WebPerfume.Controllers
             else
             {
                 var getCartOfSession = Session[CartSession];
-                if(getCartOfSession != null)
+                if (getCartOfSession != null)
                 {
                     listResult = (List<Cart>)getCartOfSession;
-                }                
+                }
             }
             return View(listResult);
         }
@@ -623,7 +628,7 @@ namespace WebPerfume.Controllers
                 order.ShipAddress = customer.Address;
                 order.ShipEmail = customer.Email;
                 order.CreateDate = DateTime.Now;
-
+                order.Status = EnumStatus.New;
                 listProduct = db.Carts.Where(x => x.CustomerId == customer.Id).ToList();
             }
             else
@@ -636,6 +641,7 @@ namespace WebPerfume.Controllers
 
                 listProduct = (List<Cart>)Session[CartSession];
             }
+
             try
             {
                 db.Orders.Add(order);
@@ -648,6 +654,10 @@ namespace WebPerfume.Controllers
                     newOrderDetails.Quantity = item.Quantity;
                     newOrderDetails.Price = (item.Product.PromotionPrice != null && item.Product.PromotionPrice.Value != 0) ? item.Product.PromotionPrice : item.Product.Price;
                     newOrderDetails.TotalMoney = newOrderDetails.Quantity * newOrderDetails.Price;
+
+                    var getProduct = db.Products.FirstOrDefault(x => x.Id == item.ProductId);
+                    getProduct.Quantity = getProduct.Quantity - item.Quantity;
+
                     db.OrderDetails.Add(newOrderDetails);
                 }
 
