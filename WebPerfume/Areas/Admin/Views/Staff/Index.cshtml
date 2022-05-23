@@ -1,0 +1,22 @@
+﻿@{
+    ViewBag.Title = "Index";
+    Layout = "~/Areas/Admin/Views/Shared/_AdminLayout.cshtml";
+}
+
+<h2>Index</h2>
+
+<div class="row">
+    <div class="table-responsive col-md-12 " style="overflow-y:auto">
+        @(Html.DevExtreme().DataGrid<WebPerfume.Areas.Admin.Model.CartModel>().DataSource(x=>x.Mvc().Area("admin").Controller("staff").LoadAction("ajaxStaff"))
+                .ShowBorders(true).ShowRowLines(true).FilterRow(x=>x.Visible(true)).RemoteOperations(true).HeaderFilter(x=>x.Visible(true))
+                .Pager(x=>x.Visible(true).ShowInfo(true).AllowedPageSizes(new int[]{ 20,50,100 }).ShowPageSizeSelector(true)).ShowColumnLines(true)
+                .Columns(col=> {
+                    col.AddFor(x => x.ShipName);
+                    col.AddFor(x => x.ShipMobile);
+                    col.AddFor(x => x.ShipEmail);
+                    col.AddFor(x => x.ShipAddress);
+                    col.AddFor(x => x.ShipSuccess);
+                    col.AddFor(x => x.Status);
+                }))
+    </div>
+</div>

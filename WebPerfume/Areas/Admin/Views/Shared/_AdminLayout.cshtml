@@ -17,6 +17,18 @@
     <!-- Custom styles for this template-->
     <link href="~/Content/Admin/css/sb-admin-2.min.css" rel="stylesheet">
     <link href="~/Content/PagedList.css" rel="stylesheet" />
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js" integrity="sha512-894YE6QWD5I59HgZOGReFYm4dnWc1Qt5NtvYSaNcOP+u1T9qYdvdihz0PPSiiqn/+/3e7Jo4EaG7TubfWGUrMQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <link href="~/Content/dx.light.compact.css" rel="stylesheet" />
+    <script src="~/Scripts/jquery-3.4.1.min.js"></script>
+    <!-- DevExtreme Quill (required by the HtmlEditor UI component) -->
+    <script src="https://cdn3.devexpress.com/jslib/21.2.7/js/dx-quill.min.js"></script>
+    <!-- DevExtreme libraries (reference only one of them) -->
+    <script src="https://cdn3.devexpress.com/jslib/21.2.3/js/dx.all.js"></script>
+    <!-- DevExpress.AspNet.Data -->
+    <script src="https://cdn3.devexpress.com/jslib/21.2.3/js/dx.aspnet.mvc.js"></script>
+    <script src="https://cdn3.devexpress.com/jslib/21.2.3/js/dx.aspnet.data.js"></script>
+
 </head>
 
 <body id="page-top">
@@ -55,6 +67,7 @@
 
                         <a class="collapse-item" href="/Admin/Account">Quản trị</a>
                         <a class="collapse-item" href="/Admin/Customer">Khách hàng</a>
+                        <a class="collapse-item" href="/Admin/Staff">Quản Lý</a>
                     </div>
                 </div>
             </li>
@@ -255,15 +268,15 @@
     <script src="~/Content/Admin/js/sb-admin-2.min.js"></script>
 
     <!-- Page level plugins -->
-    <script src="~/Content/Admin/vendor/chart.js/Chart.min.js"></script>
+    @*<script src="~/Content/Admin/vendor/chart.js/Chart.min.js"></script>*@
 
     <!-- Page level custom scripts -->
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script>
-        <script type="text/javascript" src="https://cdn.datatables.net/1.10.16/js/jquery.dataTables.min.js"></script>
-    <script src="~/Content/Admin/js/demo/chart-area-demo.js"></script>
-    <script src="~/Content/Admin/js/demo/chart-pie-demo.js"></script>
+    <script type="text/javascript" src="https://cdn.datatables.net/1.10.16/js/jquery.dataTables.min.js"></script>
+    @*<script src="~/Content/Admin/js/demo/chart-area-demo.js"></script>
+    <script src="~/Content/Admin/js/demo/chart-pie-demo.js"></script>*@
     <script src="~/Content/EventJs/modal-dialog.js"></script>
-    <script src="~/Content/EventJs/chart.js"></script>
+    @*<script src="~/Content/EventJs/chart.js"></script>*@
     @RenderSection("Scripts", required: false);
     <script>
         $("#alertBox").removeClass('hide');

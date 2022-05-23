@@ -1,0 +1,191 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <title>Rose Perfume </title>
+    <meta name="description" content="">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- Favicon -->
+    @*<link rel="shortcut icon" type="image/x-icon" href="~/Content/img/logotitle.png">*@
+
+    <!-- CSS
+    ========================= -->
+    <!--bootstrap min css-->
+    <link rel="stylesheet" href="~/Content/Client/css/bootstrap.min.css">
+    <!--owl carousel min css-->
+    <link rel="stylesheet" href="~/Content/Client/css/owl.carousel.min.css">
+    <!--slick min css-->
+    <link rel="stylesheet" href="~/Content/Client/css/slick.css">
+    <!--magnific popup min css-->
+    <link rel="stylesheet" href="~/Content/Client/css/magnific-popup.css">
+    <!--font awesome css-->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+    <!--font ionicons css-->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/ionicons/2.0.0/css/ionicons.min.css">
+    <!--animate css-->
+    <link rel="stylesheet" href="~/Content/Client/css/animate.css">
+    <!--jquery ui min css-->
+    @*<link rel="stylesheet" href="~/Content/Client/css/jquery-ui.min.css">*@
+    <link href="~/Content/EventJs/jquery-ui.css" rel="stylesheet" />
+    <!--slinky menu css-->
+    <link rel="stylesheet" href="~/Content/Client/css/slinky.menu.css">
+    <!-- Plugins CSS -->
+    <link rel="stylesheet" href="~/Content/Client/css/plugins.css">
+
+    <!-- Main Style CSS -->
+    <link rel="stylesheet" href="~/Content/Client/css/style.css">
+    @*@RenderSection("css", required: true)*@
+    <link href="~/Content/PagedList.css" rel="stylesheet" />
+    <!--modernizr min js here-->
+    <style>
+        .ui-autocomplete {
+            max-height: 350px;
+            overflow-y: auto;
+            /* prevent horizontal scrollbar */
+            overflow-x: hidden;
+        }
+        /* IE 6 doesn't support max-height
+        * we use height instead, but this forces the menu to always be this tall
+        */
+        * html .ui-autocomplete {
+            height: 100px;
+        }
+    </style>
+    <script src="~/Content/Client/js/modernizr-3.7.1.min.js"></script>
+    @*@RenderSection("modernizr", required: true)*@
+</head>
+
+<body>
+
+    <!-- Main Wrapper Start -->
+    <!--offcanvas menu area start-->
+    <div class="off_canvars_overlay">
+    </div>
+
+    <!--offcanvas menu area end-->
+    <!--header area start-->
+    <header class="header_area">
+        @RenderPage("_Header.cshtml")
+
+        @{ Html.RenderAction("Menu", "Home");}
+    </header>
+    <!--header area end-->
+    @RenderSection("_slidebanner", required: false)
+
+    @RenderBody()
+
+    @RenderSection("_blogbrand", required: false)
+
+    @RenderPage("_Footer.cshtml")
+    <!--news letter popup start-->
+    @*<div class="newletter-popup">
+            <div id="boxes" class="newletter-container">
+                <div id="dialog" class="window">
+                    <div id="popup2">
+                        <span class="b-close"><span>close</span></span>
+                    </div>
+                    <div class="box">
+                        <div class="newletter-title">
+                            <h2>Newsletter</h2>
+                        </div>
+                        <div class="box-content newleter-content">
+                            <label class="newletter-label">
+                                Enter your email address to subscribe our notification of our new
+                                post &amp; features by email.
+                            </label>
+                            <div id="frm_subscribe">
+                                <form name="subscribe" id="subscribe_popup">
+
+                                    <input type="text" value="" name="subscribe_pemail" id="subscribe_pemail"
+                                           placeholder="Enter you email address here...">
+                                    <input type="hidden" value="" name="subscribe_pname" id="subscribe_pname">
+                                    <div id="notification"></div>
+                                    <a class="theme-btn-outlined"
+                                       onclick="email_subscribepopup()"><span>Subscribe</span></a>
+                                </form>
+                                <div class="subscribe-bottom">
+                                    <input type="checkbox" id="newsletter_popup_dont_show_again">
+                                    <label for="newsletter_popup_dont_show_again">Don't show this popup again</label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>*@
+
+    <!--news letter popup start-->
+    <!-- JS
+    ============================================ -->
+    <!--jquery min js-->
+    @*@RenderSection("js", required: true)*@
+    <script src="~/Content/Client/js/jquery-3.4.1.min.js"></script>
+    <!--popper min js-->
+    <script src="~/Content/Client/js/popper.js"></script>
+    <!--bootstrap min js-->
+    <script src="~/Content/Client/js/bootstrap.min.js"></script>
+    <!--owl carousel min js-->
+    <script src="~/Content/Client/js/owl.carousel.min.js"></script>
+
+    <!--slick min js-->
+    <script src="~/Content/Client/js/slick.min.js"></script>
+    <!--magnific popup min js-->
+    <script src="~/Content/Client/js/jquery.magnific-popup.min.js"></script>
+    <!--jquery countdown min js-->
+    <script src="~/Content/Client/js/jquery.countdown.js"></script>
+    <!--jquery ui min js-->
+    @*<script src="~/Content/Client/js/jquery.ui.js"></script>*@
+    <!--jquery elevatezoom min js-->
+    <script src="~/Content/Client/js/jquery.elevatezoom.js"></script>
+    <!--isotope packaged min js-->
+    <script src="~/Content/Client/js/isotope.pkgd.min.js"></script>
+    <!--slinky menu js-->
+    <script src="~/Content/Client/js/slinky.menu.js"></script>
+    <!-- Plugins JS -->
+    <script src="~/Content/Client/js/plugins.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/wow/1.1.2/wow.min.js"></script>
+    <script>
+        new WOW().init();
+    </script>
+    <!-- Main JS -->
+    <script src="~/Content/Client/js/main.js"></script>
+    <script src="~/Content/EventJs/jquery-ui.js"></script>
+    <script src="~/Content/EventJs/search.js"></script>
+    <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+    @RenderSection("jsFooter", required: false)
+    <script>
+        $("#alertBox").removeClass('hide');
+        $("#alertBox").delay(2000).animate({ opacity: 0 }, "slow");
+    </script>
+    <script type="text/javascript">
+
+        function AddItem(Id) {
+            $.ajax({
+                url: '/Cart/AddItem',
+                data: {
+                    id: Id,
+                    quantity: 1,
+                },
+                dataType: 'json',
+                type: 'POST',
+                success: function (response) {
+                    if (response == true) {
+                        console.log("You will now be redirected.");
+                        window.location = "/my-cart";
+                    } else {
+                        swal("Notification!", "This product is out stock");
+                    }
+                },
+                error: function (e) {
+                    if (e?.status == 400) {
+                        swal("Notification!", "This product is out stock");
+                    }
+                }
+            })
+        }
+
+    </script>
+</body>
+</html>
