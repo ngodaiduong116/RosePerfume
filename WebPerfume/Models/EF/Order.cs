@@ -31,7 +31,7 @@ namespace WebPerfume.Models.EF
         [StringLength(50)]
         public string ShipEmail { get; set; }
 
-        public DateTime? CreateDate { get; set; }
+        public DateTime CreateDate { get; set; }
 
         public bool ShipSuccess { get; set; }
 

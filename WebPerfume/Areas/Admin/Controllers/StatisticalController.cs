@@ -15,21 +15,73 @@ namespace WebPerfume.Areas.Admin.Controllers
     {
         private RosePerfumeDBModel db = new RosePerfumeDBModel();
 
-        public ActionResult Index()
+        public ActionResult Index(FormCollection fields)
         {
+            var data = from od in db.OrderDetails
+                       join o in db.Orders on od.OrderId equals o.Id
+                       join p in db.Products on od.ProductId equals p.Id
+                       where o.Status == EnumStatus.Approved
+                       select new
+                       {
+                           ImportPrice = p.ImportPrice,
+                           Price = od.Price,
+                           Quantity = od.Quantity,
+                           ProductId = p.Id
+                       };
+            var revenue = data.Sum(x => x.Quantity * x.Price);
+            var import = data.Sum(x => x.Quantity * x.ImportPrice);
+            var listOrder = db.Orders.Where(x => x.Status != EnumStatus.New && x.Status != EnumStatus.Pendding);
+
+            var getListIdOrderDone = listOrder.Where(x => x.Status == EnumStatus.Approved).Select(x => x.Id).ToList();
+            var getListIdOrderFalse = listOrder.Where(x => x.Status != EnumStatus.Approved).Select(x => x.Id).ToList();
+
+            var totalRevenueQuantityDone = db.OrderDetails.Where(x => getListIdOrderDone.Contains(x.OrderId)).Sum(x => x.Quantity);
+            var totalRevenueQuantityFalse = db.OrderDetails.Where(x => getListIdOrderFalse.Contains(x.OrderId)).Sum(x => x.Quantity);
+
+            ViewBag.ListOrder = listOrder;
+            ViewBag.TotalRevenueQuantityDone = totalRevenueQuantityDone;
+            ViewBag.TotalRevenueQuantityFalse = totalRevenueQuantityFalse;
+            ViewBag.Revenue = revenue;
+            ViewBag.Profit = revenue - import;
             return View();
         }
 
-
-        public JsonResult AjaxStatistical(DataSourceLoadOptions options)
+        [HttpPost]
+        public ActionResult ThongKe(FormCollection fields)
         {
-            var listOrder = db.Orders.Where(x => x.Status != EnumStatus.New && x.Status != EnumStatus.Pendding);
-            return new JsonResult()
-            {
-                Data = DataSourceLoader.Load(listOrder, options),
-                JsonRequestBehavior = JsonRequestBehavior.AllowGet,
-                MaxJsonLength = int.MaxValue
-            };
+            string ngaybatdau = fields["ngaybatdau"];
+            string ngayketthuc = fields["ngayketthuc"];
+
+            DateTime nbd = DateTime.Parse(ngaybatdau);
+            DateTime nkt = DateTime.Parse(ngayketthuc);
+
+            var data = from od in db.OrderDetails
+                       join o in db.Orders on od.OrderId equals o.Id
+                       join p in db.Products on od.ProductId equals p.Id
+                       where o.Status == EnumStatus.Approved && o.CreateDate >= nbd && o.CreateDate <= nkt
+                       select new
+                       {
+                           ImportPrice = p.ImportPrice,
+                           Price = od.Price,
+                           Quantity = od.Quantity,
+                           ProductId = p.Id
+                       };
+            var revenue = data.Sum(x => x.Quantity * x.Price);
+            var import = data.Sum(x => x.Quantity * x.ImportPrice);
+            var listOrder = db.Orders.Where(x => x.Status != EnumStatus.New && x.Status != EnumStatus.Pendding && x.CreateDate >= nbd && x.CreateDate <= nkt).ToList();
+
+            var getListIdOrderDone = listOrder.Where(x => x.Status == EnumStatus.Approved).Select(x => x.Id).ToList();
+            var getListIdOrderFalse = listOrder.Where(x => x.Status != EnumStatus.Approved).Select(x => x.Id).ToList();
+
+            var totalRevenueQuantityDone = db.OrderDetails.Where(x => getListIdOrderDone.Contains(x.OrderId)).Sum(x => x.Quantity);
+            var totalRevenueQuantityFalse = db.OrderDetails.Where(x => getListIdOrderFalse.Contains(x.OrderId)).Sum(x => x.Quantity);
+
+            ViewBag.ListOrder = listOrder;
+            ViewBag.TotalRevenueQuantityDone = totalRevenueQuantityDone;
+            ViewBag.TotalRevenueQuantityFalse = totalRevenueQuantityFalse;
+            ViewBag.Revenue = revenue;
+            ViewBag.Profit = revenue - import;
+            return View("Index");
         }
 
         //public JsonResult Chart(int year)

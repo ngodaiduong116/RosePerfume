@@ -27,7 +27,8 @@ namespace WebPerfume.Areas.Admin.Controllers
         // GET: Admin/Product/Details/5
         public ActionResult Details(int id)
         {
-            return View();
+            var getObg = db.Products.Find(id);
+            return View(getObg);
         }
 
         // GET: Admin/Product/Create

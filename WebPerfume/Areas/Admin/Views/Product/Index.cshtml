@@ -39,7 +39,13 @@
                 Giá
             </th>
             <th>
-                Mô tả
+                Xuất xứ
+            </th>
+            <th>
+                Năm sản xuất
+            </th>
+            <th>
+                Hàng tồn
             </th>
             <th>
                 Tạo ngày
@@ -66,13 +72,19 @@
                     @Html.DisplayFor(modelItem => item.Price)
                 </td>
                 <td>
-                    @Html.DisplayFor(modelItem => item.Description)
+                    @Html.DisplayFor(modelItem => item.Origin)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.ReleaseYear)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Quantity)
                 </td>
                 <td>
                     @Html.DisplayFor(modelItem => item.CreateDate)
                 </td>
                 <td>
-                    @if (item.Quantity>0)
+                    @if (item.Quantity > 0)
                     {
                         <p class="badge badge-success">Còn hàng</p>
                     }
@@ -82,8 +94,8 @@
                     }
                 </td>
                 <td>
+                    <a href="/Admin/Product/Details/@item.Id" class="btn btn-success mb-2"><i class="fas fa-info"></i></a>
                     <a href="/Admin/Product/Edit/@item.Id" class="btn btn-warning mb-2"><i class="fas fa-pencil-alt"></i></a>
-
                     <a onclick="return confirm('Bạn có chắc chắn muốn xóa danh mục này?')" href="/Admin/Product/Delete/@item.Id" class="btn btn-danger"><i class="fas fa-trash"></i></a>
                 </td>
             </tr>

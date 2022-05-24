@@ -16,10 +16,10 @@ namespace WebPerfume {
             styleBundle.Include("~/Content/Charset.css");
 
             // Uncomment to use the Gantt control
-            //styleBundle.Include("~/Content/dx-gantt.css");
+            styleBundle.Include("~/Content/dx-gantt.css");
 
             // Uncomment to use the Diagram control
-            //styleBundle.Include("~/Content/dx-diagram.css");
+            styleBundle.Include("~/Content/dx-diagram.css");
 
             styleBundle.Include("~/Content/dx.common.css");
 
@@ -27,25 +27,25 @@ namespace WebPerfume {
             styleBundle.Include("~/Content/dx.light.css");
 
             // Uncomment to use the Gantt control
-            //scriptBundle.Include("~/Scripts/dx-gantt.js");
+            scriptBundle.Include("~/Scripts/dx-gantt.js");
 
             // Uncomment to use the Diagram control
-            //scriptBundle.Include("~/Scripts/dx-diagram.js");
+            scriptBundle.Include("~/Scripts/dx-diagram.js");
 
             // NOTE: jQuery may already be included in the default script bundle. Check the BundleConfig.cs file.
-            //scriptBundle.Include("~/Scripts/jquery-3.4.1.js");
+            scriptBundle.Include("~/Scripts/jquery-3.4.1.js");
 
             // Uncomment to use Globalize for localization
             // Docs: https://docs.devexpress.com/DevExtremeAspNetMvc/400706#globalize
-            //scriptBundle.Include("~/Scripts/cldr.js");
-            //scriptBundle.Include("~/Scripts/cldr/event.js");
-            //scriptBundle.Include("~/Scripts/cldr/supplemental.js");
-            //scriptBundle.Include("~/Scripts/cldr/unresolved.js");
-            //scriptBundle.Include("~/Scripts/globalize.js");
-            //scriptBundle.Include("~/Scripts/globalize/message.js");
-            //scriptBundle.Include("~/Scripts/globalize/number.js");
-            //scriptBundle.Include("~/Scripts/globalize/currency.js");
-            //scriptBundle.Include("~/Scripts/globalize/date.js");
+            scriptBundle.Include("~/Scripts/cldr.js");
+            scriptBundle.Include("~/Scripts/cldr/event.js");
+            scriptBundle.Include("~/Scripts/cldr/supplemental.js");
+            scriptBundle.Include("~/Scripts/cldr/unresolved.js");
+            scriptBundle.Include("~/Scripts/globalize.js");
+            scriptBundle.Include("~/Scripts/globalize/message.js");
+            scriptBundle.Include("~/Scripts/globalize/number.js");
+            scriptBundle.Include("~/Scripts/globalize/currency.js");
+            scriptBundle.Include("~/Scripts/globalize/date.js");
 
             // Uncomment to enable client-side export
             //scriptBundle.Include("~/Scripts/jszip.js");
