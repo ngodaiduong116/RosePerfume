@@ -36,9 +36,9 @@
     <!-- DevExpress.AspNet.Data -->
     @*<script src="https://cdn3.devexpress.com/jslib/21.2.3/js/dx.aspnet.mvc.js"></script>
     <script src="https://cdn3.devexpress.com/jslib/21.2.3/js/dx.aspnet.data.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-polyfill/7.4.0/polyfill.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-polyfill/7.4.0/polyfill.min.js"></script>*@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/exceljs/4.1.1/exceljs.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.2/FileSaver.min.js"></script>*@
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.2/FileSaver.min.js"></script>
 </head>
 
 <body id="page-top">
@@ -135,13 +135,19 @@
             </li>
 
             <!-- Nav Item - Charts -->
-            <li class="nav-item">
+            @*<li class="nav-item">
                 <a class="nav-link" href="/Admin/Statistical">
+                    <a class="collapse-item" href="/Admin/Staff">Quản Lý</a>
+                    <i class="fas fa-fw fa-chart-area"></i>
+                    <span>Thống kê</span>
+                </a>
+            </li>*@
+            <li class="nav-item">
+                <a class="nav-link" href="/Admin/Staff">
                     <i class="fas fa-fw fa-chart-area"></i>
                     <span>Thống kê</span>
                 </a>
             </li>
-
             <!-- Sidebar Toggler (Sidebar) -->
             <div class="text-center d-none d-md-inline">
                 <button class="rounded-circle border-0" id="sidebarToggle"></button>

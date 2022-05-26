@@ -98,6 +98,7 @@
                         else if (item.Status == EnumStatus.Pendding)
                         {
                             <a href="@Url.Action("Details", new { id = item.Id })" class="btn btn-info dialog-link">Chi Tiết</a>
+                            <a onclick="return confirm('Bạn có chắc chắn  đơn khách hàng từ chối đơn hàng này?')" href="/Admin/Order/HandlePendding/@item.Id" class="btn btn-danger mt-2">Từ chối</a>
                             <a onclick="return confirm('Bạn có chắc chắn hoàn thành đơn hàng này?')" href="/Admin/Order/HandleApprove/@item.Id" class="btn btn-success mt-2">Hoàn Thành</a>
                         }
                         else

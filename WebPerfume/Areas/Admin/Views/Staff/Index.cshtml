@@ -1,25 +1,98 @@
 ﻿@{
     ViewBag.Title = "Index";
     Layout = "~/Areas/Admin/Views/Shared/_AdminLayout.cshtml";
+    var revenue = ViewBag.Revenue;
+    var profit = ViewBag.Profit;
+    var totalRevenueQuantityDone = ViewBag.TotalRevenueQuantityDone;
+    var totalRevenueQuantityFalse = ViewBag.TotalRevenueQuantityFalse;
 }
 
 <h2>Thống Kê Báo Cáo</h2>
 <div class="row">
-    <div class="col-sm-3">
+    <div class="col-sm-2">
         <div class="row">
             <div class="col-sm-9">
                 <div id="dtDate"></div>
                 @(Html.DevExtreme().DateBox().Width("100%").Value(new DateTime(DateTime.Now.Year, DateTime.Now.Month, 1)).Name("dxDateFrom").DisplayFormat("dd/MM/yyyy").Max(DateTime.Now.AddDays(-1)).ID("dtDateFrom"))
+                <br />
                 @(Html.DevExtreme().DateBox().Width("100%").Value(DateTime.Now).Name("dxDateTo").DisplayFormat("dd/MM/yyyy").Max(DateTime.Now).ID("dtDateTo"))
             </div>
         </div>
     </div>
-    <div class="col-sm-3">
+    <div class="col-sm-2">
         @(Html.DevExtreme().Button().Text("Search").Type(ButtonType.Default).OnClick("fnOnClick"))
     </div>
+    <div class="col-sm-2">
+        <div class="card border-left-primary shadow h-100 py-2">
+            <div class="card-body">
+                <div class="row no-gutters align-items-center">
+                    <div class="col mr-2">
+                        <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
+                            Doanh thu
+                        </div>
+                        <div class="h5 mb-0 font-weight-bold text-gray-800" id="revenue">@(revenue!=null ? (revenue).ToString("N0") : "0") ₫</div>
+                    </div>
+                    <div class="col-auto">
+                        @*<i class="fas fa-dollar-sign fa-2x text-gray-300"></i>*@
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-sm-2">
+        <div class="card border-left-success shadow h-100 py-2">
+            <div class="card-body">
+                <div class="row no-gutters align-items-center">
+                    <div class="col mr-2">
+                        <div class="text-xs font-weight-bold text-success text-uppercase mb-1">
+                            Lợi nhuận
+                        </div>
+                        <div class="h5 mb-0 font-weight-bold text-gray-800" id="profit">@(profit!=null ? (profit).ToString("N0"): "0") ₫</div>
+                    </div>
+                    <div class="col-auto">
+                        @*<i class="fas fa-dollar-sign fa-2x text-gray-300"></i>*@
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-sm-2">
+        <div class="card border-left-success shadow h-100 py-2">
+            <div class="card-body">
+                <div class="row no-gutters align-items-center">
+                    <div class="col mr-2">
+                        <div class="text-xs font-weight-bold text-gray-500 text-uppercase mb-1">
+                            TỔNG SẢN PHẨM ĐÃ BÁN
+                        </div>
+                        <div class="h5 mb-0 font-weight-bold text-gray-800" id="totalRevenueQuantityDone">@(totalRevenueQuantityDone != null || totalRevenueQuantityDone != 0 ? totalRevenueQuantityDone : 0)</div>
+                    </div>
+                    <div class="col-auto">
+                        @*<i class="fas fa-dollar-sign fa-2x text-gray-300"></i>*@
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-sm-2">
+        <div class="card border-left-danger shadow h-100 py-2">
+            <div class="card-body">
+                <div class="row no-gutters align-items-center">
+                    <div class="col mr-2">
+                        <div class="text-xs font-weight-bold text-danger text-uppercase mb-1">
+                            TỔNG SẢN PHẨM HỦY
+                        </div>
+                        <div class="h5 mb-0 font-weight-bold text-danger" id="totalRevenueQuantityFalse">@(totalRevenueQuantityFalse != null || totalRevenueQuantityFalse != 0 ? totalRevenueQuantityFalse : 0)</div>
+                    </div>
+                    <div class="col-auto">
+                        @*<i class="fas fa-dollar-sign fa-2x text-gray-300"></i>*@
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
-<div class="row dx-viewport">
-    <div class="table-responsive col-md-12 " style="overflow-y:auto">
+<div class="row dx-viewport" style="margin-top: 10px;padding-top: 8px;">
+    <div class="table-responsive col-md-12 " style="overflow-y:auto;">
         @(Html.DevExtreme().DataGrid<WebPerfume.Areas.Admin.Model.CartModel>().DataSource(x=>x.Mvc().Area("admin").Controller("staff").LoadAction("ajaxStaff").OnBeforeSend("OnBeforeSend").Key("Id"))
                 .ID("dxthongke")                
                 .ShowBorders(true).ShowRowLines(true).FilterRow(x=>x.Visible(true)).RemoteOperations(true).HeaderFilter(x=>x.Visible(true))
@@ -50,11 +123,39 @@
         function OnBeforeSend(method, settings) {
             settings.data.dateFrom = $('input[name="dxDateFrom"]').val();
             settings.data.dateTo = $('input[name="dxDateTo"]').val();
-        }       
+        }
 
         function fnOnClick() {
+            var DateFrom = $('input[name="dxDateFrom"]').val();
+            var DateTo = $('input[name="dxDateTo"]').val();
+            $.ajax({
+                url: '@Url.Action("CheckDate", "staff")',
+                dataType: 'json',
+                type: 'POST',
+                data: {
+                    dateFrom: DateFrom,
+                    dateTo: DateTo
+                },
+                success: function (response) {
+                    console.log(response.Revenue);
+                    console.log(response.Profit);
+                    console.log(response.TotalRevenueQuantityDone);
+                    console.log(response.TotalRevenueQuantityFalse);
+                    $("#revenue").html(response.Revenue != null ? response.Revenue.toLocaleString('vi', { style: 'currency', currency: 'VND' }) : "0 ₫");
+                    $("#profit").html(response.Profit != null ? response.Profit.toLocaleString('vi', { style: 'currency', currency: 'VND' }) : "0 ₫");
+                    $("#totalRevenueQuantityDone").html(response.TotalRevenueQuantityDone != null ? response.TotalRevenueQuantityDone : 0);
+                    $("#totalRevenueQuantityFalse").html(response.TotalRevenueQuantityFalse != null ? response.TotalRevenueQuantityFalse : 0);
+                    sd();
+                    //revenue
+                    //profit
+                    //totalRevenueQuantityDone
+                    //totalRevenueQuantityFalse
+                }
+            })
+           /* sd();*/
+        }
+        function sd() {
             $("#dxthongke").dxDataGrid("instance").refresh();
-            console.log('gridRefreshed');
         }
         function CellTemplate(container, options) {
             var div = '';

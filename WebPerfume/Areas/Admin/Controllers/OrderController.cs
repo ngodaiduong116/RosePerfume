@@ -117,6 +117,7 @@ namespace WebPerfume.Areas.Admin.Controllers
             {
                 var getOrder = db.Orders.FirstOrDefault(x => x.Id == id);
                 getOrder.Status = EnumStatus.Approved;
+                getOrder.ShipSuccess = true;
                 db.SaveChanges();
             }
             catch
@@ -125,6 +126,21 @@ namespace WebPerfume.Areas.Admin.Controllers
             return Redirect("/Admin/Order");
         }
 
+        
+        [HttpGet]
+        public ActionResult HandlePendding(int id)
+        {
+            try
+            {
+                var getOrder = db.Orders.FirstOrDefault(x => x.Id == id);
+                getOrder.Status = EnumStatus.Reject;
+                db.SaveChanges();
+            }
+            catch
+            {
+            }
+            return Redirect("/Admin/Order");
+        }
         //[HttpPost]
         //public ActionResult ExportToExcel()
         //{
