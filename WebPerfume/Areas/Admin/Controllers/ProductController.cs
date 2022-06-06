@@ -130,8 +130,16 @@ namespace WebPerfume.Areas.Admin.Controllers
         // GET: Admin/Product/Delete/5
         public ActionResult Delete(int id)
         {
-            new ProductDAO().Delete(id);
-            SetAlert("Xóa thành công", "success");
+            bool check = new ProductDAO().Delete(id);
+            if (check)
+            {
+                SetAlert("Xóa thành công", "success");
+            }
+            else
+            {
+                SetAlert("Xóa thất bại", "error");
+            }
+            
             return RedirectToAction("Index");
         }
 

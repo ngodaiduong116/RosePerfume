@@ -36,7 +36,7 @@ namespace WebPerfume.Models.EF
             modelBuilder.Entity<Order>()
                 .HasMany(e => e.OrderDetails)
                 .WithRequired(e => e.Order)
-                .WillCascadeOnDelete(false);
+                .WillCascadeOnDelete(true);
 
             modelBuilder.Entity<OrderDetail>()
                 .Property(e => e.Price)
@@ -61,12 +61,12 @@ namespace WebPerfume.Models.EF
             modelBuilder.Entity<Product>()
                 .HasMany(e => e.OrderDetails)
                 .WithRequired(e => e.Product)
-                .WillCascadeOnDelete(false);
+                .WillCascadeOnDelete(true);
 
             modelBuilder.Entity<Product>()
                .HasMany(e => e.Carts)
                .WithRequired(e => e.Product)
-               .WillCascadeOnDelete(false);
+               .WillCascadeOnDelete(true);
         }
     }
 }
