@@ -105,15 +105,16 @@
                     col.AddFor(x => x.ShipEmail);
                     col.AddFor(x => x.ShipAddress);
                     col.AddFor(x => x.ShipSuccess);
-                    col.AddFor(x => x.Status).CellTemplate(new JS("CellTemplate"));
-                    col.AddFor(x => x.CreateDate).CalculateCellValue("FromJsonToDate");
+                    col.AddFor(x => x.Totals).CellTemplate(new JS("CellTemplateVND"));
+                    col.AddFor(x => x.Status).CellTemplate(new JS("CellTemplate")).Alignment(HorizontalAlignment.Center);
+                    col.AddFor(x => x.CreateDate).CalculateCellValue("FromJsonToDate").Alignment(HorizontalAlignment.Center);
                 }))
     </div>
 </div>
 
 @section scripts{
     <script>
-
+        
         function FromJsonToDate(value) {
             if (value != null) {
                 return new Date(parseInt(value.CreateDate.replace('/Date(', '')));
@@ -156,6 +157,13 @@
         }
         function sd() {
             $("#dxthongke").dxDataGrid("instance").refresh();
+        }
+        function CellTemplateVND(container, options) {
+            var div = '';
+            var x = options.value;
+            x = x.toLocaleString('en-US', { style: 'currency', currency: 'VND' });
+            div = `<span>${x}</span>`;
+            $(div).appendTo(container);
         }
         function CellTemplate(container, options) {
             var div = '';

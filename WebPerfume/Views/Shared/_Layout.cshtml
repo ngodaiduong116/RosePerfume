@@ -36,6 +36,7 @@
 
     <!-- Main Style CSS -->
     <link rel="stylesheet" href="~/Content/Client/css/style.css">
+    <link rel="stylesheet" href="~/Content/Client/css/customer.css">
     @*@RenderSection("css", required: true)*@
     <link href="~/Content/PagedList.css" rel="stylesheet" />
     <!--modernizr min js here-->
@@ -55,8 +56,8 @@
     </style>
     <script src="~/Content/Client/js/modernizr-3.7.1.min.js"></script>
     @*@RenderSection("modernizr", required: true)*@
-	@Styles.Render("~/Content/DevExtremeBundle")
-	@Scripts.Render("~/Scripts/DevExtremeBundle")
+    @Styles.Render("~/Content/DevExtremeBundle")
+    @Scripts.Render("~/Scripts/DevExtremeBundle")
 </head>
 
 <body>
@@ -68,7 +69,7 @@
 
     <!--offcanvas menu area end-->
     <!--header area start-->
-    <header class="header_area">
+    <header class="header_area" id="content-wrapper-customer">
         @RenderPage("_Header.cshtml")
 
         @{ Html.RenderAction("Menu", "Home");}
@@ -137,6 +138,7 @@
     <script src="~/Content/Client/js/jquery.magnific-popup.min.js"></script>
     <!--jquery countdown min js-->
     <script src="~/Content/Client/js/jquery.countdown.js"></script>
+
     <!--jquery ui min js-->
     @*<script src="~/Content/Client/js/jquery.ui.js"></script>*@
     <!--jquery elevatezoom min js-->
@@ -156,6 +158,7 @@
     <script src="~/Content/EventJs/jquery-ui.js"></script>
     <script src="~/Content/EventJs/search.js"></script>
     <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+    <script src="~/Content/EventJs/modal-dialog-customer.js"></script>
     @RenderSection("jsFooter", required: false)
     <script>
         $("#alertBox").removeClass('hide');
@@ -187,7 +190,6 @@
                 }
             })
         }
-
     </script>
 </body>
 </html>

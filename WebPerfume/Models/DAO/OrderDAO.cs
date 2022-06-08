@@ -24,11 +24,11 @@ namespace WebPerfume.Models.DAO
             List<Order> model = db.Orders.Where(n => n.Status == EnumStatus.New || n.Status == EnumStatus.Pendding).ToList();
             if (!string.IsNullOrEmpty(searchString))
             {
-                return model = model.Where(n => n.ShipName.Contains(searchString)).ToList();
+                return model = model.Where(n => n.ShipName.Contains(searchString)).OrderByDescending(x => x.Id).ToList();
             }
             else
             {
-                return model.OrderBy(n => n.Id).ToPagedList(page, pagesize).ToList();
+                return model.OrderByDescending(n => n.Id).ToPagedList(page, pagesize).ToList();
             }
         }
 

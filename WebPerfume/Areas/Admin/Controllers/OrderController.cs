@@ -126,7 +126,6 @@ namespace WebPerfume.Areas.Admin.Controllers
             return Redirect("/Admin/Order");
         }
 
-        
         [HttpGet]
         public ActionResult HandlePendding(int id)
         {
@@ -134,47 +133,19 @@ namespace WebPerfume.Areas.Admin.Controllers
             {
                 var getOrder = db.Orders.FirstOrDefault(x => x.Id == id);
                 getOrder.Status = EnumStatus.Reject;
+                List<OrderDetail> listOrderDetail = db.OrderDetails.Where(x => x.OrderId == getOrder.Id).ToList();
+                listOrderDetail.ForEach(item =>
+                {
+                    var getProduct = db.Products.FirstOrDefault(x => x.Id == item.ProductId);
+                    getProduct.Quantity += item.Quantity;
+                });
                 db.SaveChanges();
+                SetAlert("Hủy đơn thành công", "success");
             }
             catch
             {
             }
             return Redirect("/Admin/Order");
         }
-        //[HttpPost]
-        //public ActionResult ExportToExcel()
-        //{
-        //    var ExcelData = (from od in db.OrderDetails
-        //                     join o in db.Orders
-        //                     on od.OrderId equals o.Id
-        //                     join p in db.Products
-        //                     on od.ProductId equals p.Id
-        //                     select new
-        //                     {
-        //                         Name = o.ShipName,
-        //                         Email = o.ShipEmail,
-        //                         Phone = o.ShipMobile,
-        //                         ProductName = p.Name,
-        //                         CreatedOn = o.CreateDate.Value,
-        //                         Price = od.Price.Value,
-        //                         Quantity = od.Quantity.Value,
-        //                         Total = od.Price.Value * od.Quantity.Value
-        //                     }).ToList();
-        //    var gv = new GridView();
-        //    gv.DataSource = ExcelData;
-        //    gv.DataBind();
-        //    Response.ClearContent();
-        //    Response.Buffer = true;
-        //    Response.AddHeader("content-disposition", "attachment; filename=DemoExcel.xls");
-        //    Response.ContentType = "application/ms-excel";
-        //    Response.Charset = "";
-        //    StringWriter objStringWriter = new StringWriter();
-        //    HtmlTextWriter objHtmlTextWriter = new HtmlTextWriter(objStringWriter);
-        //    gv.RenderControl(objHtmlTextWriter);
-        //    Response.Output.Write(objStringWriter.ToString());
-        //    Response.Flush();
-        //    Response.End();
-        //    return View();
-        //}
     }
 }

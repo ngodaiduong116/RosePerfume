@@ -64,6 +64,7 @@ namespace WebPerfume.Areas.Admin.Controllers
                 obj.ShipMobile = item.ShipMobile;
                 obj.ShipEmail = item.ShipEmail;
                 obj.ShipAddress = item.ShipAddress;
+                obj.Totals = db.OrderDetails.Where(x => x.OrderId == item.Id).Sum(y => y.TotalMoney);
                 obj.ShipSuccess = item.ShipSuccess;
                 obj.CreateDate = item.CreateDate;
                 obj.Status = item.Status;
@@ -75,6 +76,7 @@ namespace WebPerfume.Areas.Admin.Controllers
                 JsonRequestBehavior = JsonRequestBehavior.AllowGet,
             };
         }
+
         [HttpPost]
         public ActionResult CheckDate(DateTime dateFrom, DateTime dateTo)
         {

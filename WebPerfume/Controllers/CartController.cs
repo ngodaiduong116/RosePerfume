@@ -653,7 +653,7 @@ namespace WebPerfume.Controllers
                     newOrderDetails.ProductId = item.ProductId;
                     newOrderDetails.Quantity = item.Quantity;
                     newOrderDetails.Price = (item.Product.PromotionPrice != null && item.Product.PromotionPrice.Value != 0) ? item.Product.PromotionPrice : item.Product.Price;
-                    newOrderDetails.TotalMoney = newOrderDetails.Quantity * newOrderDetails.Price;
+                    newOrderDetails.TotalMoney = newOrderDetails.Quantity * newOrderDetails.Price ?? 0;
 
                     var getProduct = db.Products.FirstOrDefault(x => x.Id == item.ProductId);
                     getProduct.Quantity = getProduct.Quantity - item.Quantity;
